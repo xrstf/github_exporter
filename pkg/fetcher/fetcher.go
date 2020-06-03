@@ -187,6 +187,13 @@ func (f *Fetcher) Worker() {
 			continue
 		}
 
+		// try batching up issues next
+		repo, candidates = f.getIssueBatch(10, client.MaxIssuesPerQuery)
+		if repo != nil {
+			f.enqueueUpdatedIssues(repo, candidates)
+			continue
+		}
+
 		// no repo has enough items for a good batch; in order to not burn
 		// CPU cycles, we will wait a bit and check again. But we don't wait
 		// forever, otherwise repositories with very few PRs might never get
@@ -202,6 +209,12 @@ func (f *Fetcher) Worker() {
 		// got a mini batch
 		if repo != nil {
 			f.enqueueUpdatedPullRequests(repo, candidates)
+			continue
+		}
+
+		repo, candidates = f.getIssueBatch(1, client.MaxIssuesPerQuery)
+		if repo != nil {
+			f.enqueueUpdatedIssues(repo, candidates)
 			continue
 		}
 
@@ -238,11 +251,19 @@ func (f *Fetcher) getNextJob() (*github.Repository, string, interface{}) {
 }
 
 func (f *Fetcher) getPullRequestBatch(minBatchSize int, maxBatchSize int) (*github.Repository, []int) {
+	return f.getBatch(f.pullRequestQueues, minBatchSize, maxBatchSize)
+}
+
+func (f *Fetcher) getIssueBatch(minBatchSize int, maxBatchSize int) (*github.Repository, []int) {
+	return f.getBatch(f.issueQueues, minBatchSize, maxBatchSize)
+}
+
+func (f *Fetcher) getBatch(queues map[string]prioritizedIntegerQueue, minBatchSize int, maxBatchSize int) (*github.Repository, []int) {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
 
 	for fullName := range f.repositories {
-		queue := f.pullRequestQueues[fullName]
+		queue := queues[fullName]
 
 		batch := queue.getBatch(minBatchSize, maxBatchSize)
 		if batch != nil {

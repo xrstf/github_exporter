@@ -167,9 +167,9 @@ func (f *Fetcher) processUpdateIssuesJob(repo *github.Repository, log logrus.Fie
 
 	fetchedNumbers := []int{}
 	fetchedNumbersMap := map[int]struct{}{}
-	for _, pr := range issues {
-		fetchedNumbers = append(fetchedNumbers, pr.Number)
-		fetchedNumbersMap[pr.Number] = struct{}{}
+	for _, issue := range issues {
+		fetchedNumbers = append(fetchedNumbers, issue.Number)
+		fetchedNumbersMap[issue.Number] = struct{}{}
 	}
 
 	log.Debugf("Fetched %d out of %d issues.", len(fetchedNumbers), len(meta.numbers))
@@ -196,15 +196,15 @@ func (f *Fetcher) processUpdateIssuesJob(repo *github.Repository, log logrus.Fie
 }
 
 // processFindUpdatedIssuesJob fetches the 100 most recently updated
-// PRs in the given repository and updates repo. The job will be removed
-// from the job queue afterwards and all fetched PRs will be removed from
-// the priority/regular PR queues.
+// issues in the given repository and updates repo. The job will be removed
+// from the job queue afterwards and all fetched issues will be removed from
+// the priority/regular issue queues.
 func (f *Fetcher) processFindUpdatedIssuesJob(repo *github.Repository, log logrus.FieldLogger, job string) error {
 	fetchedNumbers := []int{}
 
 	issues, _, err := f.client.ListIssues(repo.Owner, repo.Name, nil, "")
-	for _, pr := range issues {
-		fetchedNumbers = append(fetchedNumbers, pr.Number)
+	for _, issue := range issues {
+		fetchedNumbers = append(fetchedNumbers, issue.Number)
 	}
 
 	log.Debugf("Fetched %d recently updated issues.", len(fetchedNumbers))
@@ -222,7 +222,7 @@ type scanIssuesJobMeta struct {
 }
 
 // processScanIssuesJob is the initial job for every repository.
-// It lists all existing pull requests and adds them to repo.
+// It lists all existing issues and adds them to repo.
 //
 // Because the initial scan is vital for proper functioning of every
 // other job, this job must succeed before anything else can happen
