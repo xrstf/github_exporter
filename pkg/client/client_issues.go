@@ -56,7 +56,7 @@ func (c *Client) GetRepositoryIssues(owner string, name string, numbers []int) (
 		"cost":  q.RateLimit.Cost,
 	}).Debugf("GetRepositoryIssues()")
 
-	if err != nil && !strings.Contains(err.Error(), "Could not resolve to a Issue") {
+	if err != nil && !strings.Contains(err.Error(), "Could not resolve to an Issue") {
 		return nil, err
 	}
 
