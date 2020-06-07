@@ -1,6 +1,6 @@
-# xrstf's github_exporter for Prometheus
+# xrstf's GitHub Exporter for Prometheus
 
-This github_exporter exposes Prometheus metrics for a list of pre-configured repositories.
+This exporter exposes Prometheus metrics for a list of pre-configured GitHub repositories.
 The focus is on providing more insights about issues and pull requests.
 
 It uses GitHub's API v4 and tries its best to not exceed the request quotas, but fore large
