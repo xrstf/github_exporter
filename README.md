@@ -26,10 +26,11 @@ the fetching itself is done sequentially to avoid triggering GitHub's anti-abuse
 Fetching open PRs/issues has higher priority, so that even large amounts of old PRs/issues
 cannot interfere with the freshness of open PRs/issues.
 
-It is possible to limit the initial scan, so that for very large repositories not all
-items are fetched. But this only limits the initial scan, over time the exporter will
-learn about new PRs/issues and not forget the old ones (and since it always keeps all
-PRs/issues up-to-date, the number of items fetched will slooooowly over time grow).
+It is possible to limit the initial scan (using `-pr-depth` and `-issue-depth`), so that
+for very large repositories not all items are fetched. But this only limits the initial
+scan, over time the exporter will learn about new PRs/issues and not forget the old ones
+(and since it always keeps all PRs/issues up-to-date, the number of items fetched will
+slooooowly over time grow).
 
 Jobs are always removed from the queue, even if they failed. The exporter relies on the
 goroutines to re-schedule them later anyway, and this prevents flooding GitHub when the
