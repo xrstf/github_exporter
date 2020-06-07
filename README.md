@@ -3,6 +3,8 @@
 This exporter exposes Prometheus metrics for a list of pre-configured GitHub repositories.
 The focus is on providing more insights about issues and pull requests.
 
+![Grafana Screenshot](https://github.com/xrstf/github_exporter/blob/master/grafana/screenshot.png?raw=true)
+
 It uses GitHub's API v4 and tries its best to not exceed the request quotas, but fore large
 repositories (5k+ PRs) it's recommended to tweak the settings a bit.
 
