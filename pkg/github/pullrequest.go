@@ -1,7 +1,6 @@
 package github
 
 import (
-	"regexp"
 	"strings"
 	"time"
 
@@ -23,24 +22,6 @@ type PullRequest struct {
 	Contexts  []BuildContext
 }
 
-func (p *PullRequest) Mergable() bool {
-	if p.State != githubv4.PullRequestStateOpen {
-		return false
-	}
-
-	for _, ctx := range p.Contexts {
-		if ctx.Name == "tide" {
-			continue
-		}
-
-		if ctx.State != githubv4.StatusStateSuccess {
-			return false
-		}
-	}
-
-	return true
-}
-
 func (p *PullRequest) HasLabel(label string) bool {
 	label = strings.ToLower(label)
 
@@ -53,16 +34,12 @@ func (p *PullRequest) HasLabel(label string) bool {
 	return false
 }
 
-var sizeRegex = regexp.MustCompile(`^size/(.+)$`)
-
-func (p *PullRequest) Size() string {
-	for _, label := range p.Labels {
-		label := strings.ToLower(label)
-
-		if match := sizeRegex.FindStringSubmatch(label); match != nil {
-			return strings.ToLower(match[1])
+func (p *PullRequest) Context(name string) *BuildContext {
+	for i, ctx := range p.Contexts {
+		if ctx.Name == name {
+			return &p.Contexts[i]
 		}
 	}
 
-	return ""
+	return nil
 }

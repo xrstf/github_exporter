@@ -20,7 +20,6 @@ import (
 
 type options struct {
 	repositories    repositoryList
-	ignoredContexts stringSlice
 	refreshInterval time.Duration
 	resyncInterval  time.Duration
 	depth           int
@@ -51,7 +50,6 @@ func main() {
 	}
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
-	flag.Var(&opt.ignoredContexts, "ignore-context", "build context to ignore when determining PR mergability, can be given multiple times")
 	flag.IntVar(&opt.depth, "depth", opt.depth, "max number of pull request to fetch in any given repository (PRs are always sorted in descending order by updated time) (-1 disables the limit)")
 	flag.DurationVar(&opt.refreshInterval, "refresh-interval", opt.refreshInterval, "time in between refreshes (only open PRs and up to N recently updated PRs)")
 	flag.IntVar(&opt.refreshDepth, "refresh-depth", opt.refreshDepth, "number of recently updated PRs to fetch in every refresh")
