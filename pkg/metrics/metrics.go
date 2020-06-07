@@ -44,20 +44,6 @@ var (
 		nil,
 	)
 
-	githubPointsRemaining = prometheus.NewDesc(
-		"github_exporter_api_points_remaining",
-		"Number of currently remaining GitHub API points",
-		nil,
-		nil,
-	)
-
-	githubRequestsTotal = prometheus.NewDesc(
-		"github_exporter_api_requests_total",
-		"Total number of requests against the GitHub API",
-		[]string{"repo"},
-		nil,
-	)
-
 	issueInfo *prometheus.Desc
 
 	issueLabelCount = prometheus.NewDesc(
@@ -92,6 +78,20 @@ var (
 		"github_exporter_issue_queue_size",
 		"Number of issues currently queued for an update",
 		[]string{"repo", "queue"},
+		nil,
+	)
+
+	githubPointsRemaining = prometheus.NewDesc(
+		"github_exporter_api_points_remaining",
+		"Number of currently remaining GitHub API points",
+		nil,
+		nil,
+	)
+
+	githubRequestsTotal = prometheus.NewDesc(
+		"github_exporter_api_requests_total",
+		"Total number of requests against the GitHub API",
+		[]string{"repo"},
 		nil,
 	)
 )
