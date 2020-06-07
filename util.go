@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -46,8 +45,4 @@ func (l *stringSlice) String() string {
 func (l *stringSlice) Set(value string) error {
 	*l = append(*l, value)
 	return nil
-}
-
-func getOptions(ctx context.Context) options {
-	return ctx.Value(OptionsCtxKey).(options)
 }

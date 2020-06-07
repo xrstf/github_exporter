@@ -99,7 +99,9 @@ func (f *Fetcher) processFindUpdatedPullRequestsJob(repo *github.Repository, log
 }
 
 type scanPullRequestsJobMeta struct {
-	cursor string
+	max     int
+	fetched int
+	cursor  string
 }
 
 // processScanPullRequestsJob is the initial job for every repository.
@@ -115,6 +117,15 @@ func (f *Fetcher) processScanPullRequestsJob(repo *github.Repository, log logrus
 	fetchedNumbers := []int{}
 
 	prs, cursor, err := f.client.ListPullRequests(repo.Owner, repo.Name, nil, meta.cursor)
+
+	// if a max limit was set, enforce it (using ">=" here makes
+	// it so that we stop cleanly when the list of PRs is exactly
+	// the right amount that was left to fetch)
+	if meta.max > 0 && len(prs)+meta.fetched >= meta.max {
+		prs = prs[:meta.max-meta.fetched]
+		cursor = ""
+	}
+
 	for _, pr := range prs {
 		fetchedNumbers = append(fetchedNumbers, pr.Number)
 	}
@@ -134,7 +145,9 @@ func (f *Fetcher) processScanPullRequestsJob(repo *github.Repository, log logrus
 		// queue the query for the next page
 		if cursor != "" {
 			f.enqueueJob(repo, job, scanPullRequestsJobMeta{
-				cursor: cursor,
+				max:     meta.max,
+				fetched: meta.fetched + len(prs),
+				cursor:  cursor,
 			})
 		}
 
@@ -218,7 +231,9 @@ func (f *Fetcher) processFindUpdatedIssuesJob(repo *github.Repository, log logru
 }
 
 type scanIssuesJobMeta struct {
-	cursor string
+	max     int
+	fetched int
+	cursor  string
 }
 
 // processScanIssuesJob is the initial job for every repository.
@@ -234,6 +249,15 @@ func (f *Fetcher) processScanIssuesJob(repo *github.Repository, log logrus.Field
 	fetchedNumbers := []int{}
 
 	issues, cursor, err := f.client.ListIssues(repo.Owner, repo.Name, nil, meta.cursor)
+
+	// if a max limit was set, enforce it (using ">=" here makes
+	// it so that we stop cleanly when the list of issues is exactly
+	// the right amount that was left to fetch)
+	if meta.max > 0 && len(issues)+meta.fetched >= meta.max {
+		issues = issues[:meta.max-meta.fetched]
+		cursor = ""
+	}
+
 	for _, pr := range issues {
 		fetchedNumbers = append(fetchedNumbers, pr.Number)
 	}
@@ -253,7 +277,9 @@ func (f *Fetcher) processScanIssuesJob(repo *github.Repository, log logrus.Field
 		// queue the query for the next page
 		if cursor != "" {
 			f.enqueueJob(repo, job, scanIssuesJobMeta{
-				cursor: cursor,
+				max:     meta.max,
+				fetched: meta.fetched + len(issues),
+				cursor:  cursor,
 			})
 		}
 

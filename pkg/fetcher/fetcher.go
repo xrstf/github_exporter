@@ -60,8 +60,10 @@ func (f *Fetcher) EnqueueUpdatedPullRequests(r *github.Repository) {
 	f.enqueueJob(r, findUpdatedPullRequestsJobKey, nil)
 }
 
-func (f *Fetcher) EnqueuePullRequestScan(r *github.Repository) {
-	f.enqueueJob(r, scanPullRequestsJobKey, scanPullRequestsJobMeta{})
+func (f *Fetcher) EnqueuePullRequestScan(r *github.Repository, max int) {
+	f.enqueueJob(r, scanPullRequestsJobKey, scanPullRequestsJobMeta{
+		max: max,
+	})
 }
 
 func (f *Fetcher) enqueueUpdatedPullRequests(r *github.Repository, numbers []int) {
@@ -74,8 +76,10 @@ func (f *Fetcher) EnqueueUpdatedIssues(r *github.Repository) {
 	f.enqueueJob(r, findUpdatedIssuesJobKey, nil)
 }
 
-func (f *Fetcher) EnqueueIssueScan(r *github.Repository) {
-	f.enqueueJob(r, scanIssuesJobKey, scanIssuesJobMeta{})
+func (f *Fetcher) EnqueueIssueScan(r *github.Repository, max int) {
+	f.enqueueJob(r, scanIssuesJobKey, scanIssuesJobMeta{
+		max: max,
+	})
 }
 
 func (f *Fetcher) enqueueUpdatedIssues(r *github.Repository, numbers []int) {
