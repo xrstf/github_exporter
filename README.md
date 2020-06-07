@@ -54,6 +54,8 @@ A Docker image is available as [`xrstf/github_exporter`](https://hub.docker.com/
 You need an OAuth2 token to authenticate against the API. Make it available
 as the `GITHUB_TOKEN` environment variable.
 
+By default, the exporter listens on `0.0.0.0:9612`.
+
 All configuration happens via commandline arguments:
 
 ```
@@ -67,7 +69,7 @@ Usage of ./github_exporter:
   -issue-resync-interval duration
         time in between full issue re-syncs (default 12h0m0s)
   -listen string
-        address and port to listen on (default ":8080")
+        address and port to listen on (default ":9612")
   -pr-depth int
         max number of pull requests to fetch per repository upon startup (-1 disables the limit, 0 disables PR fetching entirely) (default -1)
   -pr-refresh-interval duration

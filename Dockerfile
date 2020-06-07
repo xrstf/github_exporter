@@ -8,5 +8,5 @@ FROM alpine:3.12
 
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /app/github_exporter .
-EXPOSE 8080
+EXPOSE 9612
 ENTRYPOINT ["/github_exporter"]

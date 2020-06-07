@@ -46,7 +46,7 @@ func main() {
 		issueRefreshInterval: 5 * time.Minute,
 		issueResyncInterval:  12 * time.Hour,
 		issueDepth:           -1,
-		listenAddr:           ":8080",
+		listenAddr:           ":9612",
 	}
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
