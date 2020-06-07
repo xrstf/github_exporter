@@ -8,8 +8,8 @@ repositories (5k+ PRs) it's recommended to tweak the settings a bit.
 
 ## Operation
 
-The goal of this particular exporter is to provide metrics for *all* pull requests and
-issues within a given set of repositories. At the same time, *open* issues/PRs should be
+The goal of this particular exporter is to provide metrics for **all** pull requests and
+issues within a given set of repositories. At the same time, **open** issues/PRs should be
 refreshed much more often and quickly than older data.
 
 To achieve this, the exporter upon startup scans all repositories for all PRs/issues. After
@@ -18,7 +18,7 @@ this is complete, it will
 * fetch the most recently updated 100 PRs/issues (to detect new elements and elements
   whose status has changed),
 * re-fetch all open PRs/issues frequently (every 5 minutes by default) and
-* re-fetch *all* PRs/issues every 12 hours by default.
+* re-fetch **all** PRs/issues every 12 hours by default.
 
 While the scheduling for the re-fetches happens concurrently in multiple go routines,
 the fetching itself is done sequentially to avoid triggering GitHub's anti-abuse system.
@@ -31,11 +31,20 @@ items are fetched. But this only limits the initial scan, over time the exporter
 learn about new PRs/issues and not forget the old ones (and since it always keeps all
 PRs/issues up-to-date, the number of items fetched will slooooowly over time grow).
 
+Jobs are always removed from the queue, even if they failed. The exporter relies on the
+goroutines to re-schedule them later anyway, and this prevents flooding GitHub when the
+API has issues or misconfiguration occurs. Job queues can only contain one job per kind,
+so even if the API is down for an hour, the queue will not fill up with the re-fetch job.
+
 ## Installation
+
+You need Go 1.14 installed on your machine.
 
 ```
 go get go.xrstf.de/github_exporter
 ```
+
+A Docker image is available as [`xrstf/github_exporter`](https://hub.docker.com/r/xrstf/github_exporter).
 
 ## Usage
 
@@ -70,29 +79,57 @@ Usage of ./github_exporter:
 
 ## Metrics
 
+**All** metrics are labelled with `repo=(full repo name)`, for example
+`repo="xrstf/github_exporter"`.
+
 The following metrics are available:
 
-* `github_exporter_pr_info`
-* `github_exporter_pr_label_count`
-* `github_exporter_pr_created_at`
-* `github_exporter_pr_updated_at`
-* `github_exporter_pr_fetched_at`
+* `github_exporter_pr_info` contains lots of metadata labels and always has a constant
+  value of `1`. Labels are:
+
+  * `number` is the PR's number.
+  * `state` is one of `open`, `closed` or `merged`.
+  * `author` is the author ID (or username if `-realnames` is configured).
+
+  In addition, the exporter recognizes a few common label conventions, namely:
+
+  * `size/*` is reflected as a `size` label (e.g. the `size/xs` label on GitHub becomes
+    a `size="xs"` label on the Prometheus metric).
+  * `approved` is reflected as a boolean `approved` label.
+  * `lgtm` is reflected as a boolean `lgtm` label.
+  * `do-no-merge/*` is reflected as a boolean `pending` label.
+
+* `github_exporter_pr_label_count` is the number of PRs that have a given label
+  and state. This counts all labels individually, not just those recognized for
+  the `_info` metric.
+
+* `github_exporter_pr_created_at` is the UNIX timestamp of when the PR was
+  created on GitHub. This metric only has `repo` and `number` labels.
+
+* `github_exporter_pr_updated_at` is the UNIX timestamp of when the PR was
+  last updated on GitHub. This metric only has `repo` and `number` labels.
+
+* `github_exporter_pr_fetched_at` is the UNIX timestamp of when the PR was
+  last fetched from the GitHub API. This metric only has `repo` and `number` labels.
+
+The PR metrics are mirrored for issues:
+
 * `github_exporter_issue_info`
 * `github_exporter_issue_label_count`
 * `github_exporter_issue_created_at`
 * `github_exporter_issue_updated_at`
 * `github_exporter_issue_fetched_at`
 
-The `_info` metrics contain a large number of labels and have a constant value of `1`,
-whereas all other metrics only contain the bare minimum to identify an issue/PR
-(repository + number).
-
 And a few more metrics for monitoring the exporter itself are available as well:
 
-* `github_exporter_pr_queue_size`
-* `github_exporter_issue_queue_size`
-* `github_exporter_api_requests_total`
-* `github_exporter_api_points_remaining`
+* `github_exporter_pr_queue_size` is the number of PRs currently queued for
+  being fetched from the API. This is split via the `queue` label into `priority`
+  (open PRs) and `regular` (older PRs).
+* `github_exporter_issue_queue_size` is the same as for the PR queue.
+* `github_exporter_api_requests_total` counts the number of API requests per
+  repository.
+* `github_exporter_api_points_remaining` is a gauge representing the remaining
+  API points. 5k points can be consumed per hour, with resets after 1 hour.
 
 ## License
 
