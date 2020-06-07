@@ -15,6 +15,13 @@ type graphqlIssue struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
+	Author struct {
+		Login string
+		User  struct {
+			ID string
+		} `graphql:"... on User"`
+	}
+
 	Labels struct {
 		Nodes []struct {
 			Name string
@@ -22,14 +29,19 @@ type graphqlIssue struct {
 	} `graphql:"labels(first: 50)"`
 }
 
-func convertIssue(api graphqlIssue, fetchedAt time.Time) github.Issue {
+func (c *Client) convertIssue(api graphqlIssue, fetchedAt time.Time) github.Issue {
 	issue := github.Issue{
 		Number:    api.Number,
+		Author:    api.Author.User.ID,
 		State:     api.State,
 		CreatedAt: api.CreatedAt,
 		UpdatedAt: api.UpdatedAt,
 		FetchedAt: fetchedAt,
 		Labels:    []string{},
+	}
+
+	if c.realnames {
+		issue.Author = api.Author.Login
 	}
 
 	for _, label := range api.Labels.Nodes {
@@ -63,7 +75,7 @@ func (c *Client) GetRepositoryIssues(owner string, name string, numbers []int) (
 	now := time.Now()
 	issues := []github.Issue{}
 	for _, pr := range q.GetAll() {
-		issues = append(issues, convertIssue(pr, now))
+		issues = append(issues, c.convertIssue(pr, now))
 	}
 
 	return issues, nil
@@ -78,7 +90,7 @@ type listIssuesQuery struct {
 				EndCursor   githubv4.String
 				HasNextPage bool
 			}
-		} `graphql:"issues(states: $states, first: 100, orderBy: {field: CREATED_AT, direction: DESC}, after: $cursor)"`
+		} `graphql:"issues(states: $states, first: 100, orderBy: {field: UPDATED_AT, direction: DESC}, after: $cursor)"`
 	} `graphql:"repository(owner: $owner, name: $name)"`
 }
 
@@ -121,7 +133,7 @@ func (c *Client) ListIssues(owner string, name string, states []githubv4.IssueSt
 	now := time.Now()
 	issues := []github.Issue{}
 	for _, node := range q.Repository.Issues.Nodes {
-		issues = append(issues, convertIssue(node, now))
+		issues = append(issues, c.convertIssue(node, now))
 	}
 
 	cursor = ""

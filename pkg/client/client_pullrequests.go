@@ -16,6 +16,13 @@ type graphqlPullRequest struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
+	Author struct {
+		Login string
+		User  struct {
+			ID string
+		} `graphql:"... on User"`
+	}
+
 	Labels struct {
 		Nodes []struct {
 			Name string
@@ -36,15 +43,20 @@ type graphqlPullRequest struct {
 	} `graphql:"commits(last: 1)"`
 }
 
-func convertPullRequest(api graphqlPullRequest, fetchedAt time.Time) github.PullRequest {
+func (c *Client) convertPullRequest(api graphqlPullRequest, fetchedAt time.Time) github.PullRequest {
 	pr := github.PullRequest{
 		Number:    api.Number,
+		Author:    api.Author.User.ID,
 		State:     api.State,
 		CreatedAt: api.CreatedAt,
 		UpdatedAt: api.UpdatedAt,
 		FetchedAt: fetchedAt,
 		Labels:    []string{},
 		Contexts:  []github.BuildContext{},
+	}
+
+	if c.realnames {
+		pr.Author = api.Author.Login
 	}
 
 	for _, label := range api.Labels.Nodes {
@@ -87,7 +99,7 @@ func (c *Client) GetRepositoryPullRequests(owner string, name string, numbers []
 	now := time.Now()
 	prs := []github.PullRequest{}
 	for _, pr := range q.GetAll() {
-		prs = append(prs, convertPullRequest(pr, now))
+		prs = append(prs, c.convertPullRequest(pr, now))
 	}
 
 	return prs, nil
@@ -146,7 +158,7 @@ func (c *Client) ListPullRequests(owner string, name string, states []githubv4.P
 	now := time.Now()
 	prs := []github.PullRequest{}
 	for _, node := range q.Repository.PullRequests.Nodes {
-		prs = append(prs, convertPullRequest(node, now))
+		prs = append(prs, c.convertPullRequest(node, now))
 	}
 
 	cursor = ""

@@ -97,7 +97,7 @@ var (
 )
 
 func init() {
-	prLabels := []string{"repo", "number", "state"}
+	prLabels := []string{"repo", "number", "author", "state"}
 	prLabels = append(prLabels, prow.PullRequestLabelNames()...)
 
 	pullRequestInfo = prometheus.NewDesc(
@@ -107,7 +107,7 @@ func init() {
 		nil,
 	)
 
-	issueLabels := []string{"repo", "number", "state"}
+	issueLabels := []string{"repo", "number", "author", "state"}
 	issueLabels = append(issueLabels, prow.IssueLabelNames()...)
 
 	issueInfo = prometheus.NewDesc(

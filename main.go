@@ -20,6 +20,7 @@ import (
 
 type options struct {
 	repositories         repositoryList
+	realnames            bool
 	prRefreshInterval    time.Duration
 	prResyncInterval     time.Duration
 	prDepth              int
@@ -49,6 +50,7 @@ func main() {
 	}
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
+	flag.BoolVar(&opt.realnames, "realnames", opt.realnames, "use usernames instead of internal IDs for author labels (this will make metrics contain personally identifiable information)")
 	flag.IntVar(&opt.prDepth, "pr-depth", opt.prDepth, "max number of pull requests to fetch per repository upon startup (-1 disables the limit, 0 disables PR fetching entirely)")
 	flag.DurationVar(&opt.prRefreshInterval, "pr-refresh-interval", opt.prRefreshInterval, "time in between PR refreshes")
 	flag.DurationVar(&opt.prResyncInterval, "pr-resync-interval", opt.prResyncInterval, "time in between full PR re-syncs")
@@ -95,7 +97,7 @@ func main() {
 	// setup API client
 	ctx := context.Background()
 
-	client, err := client.NewClient(ctx, log.WithField("component", "client"), token)
+	client, err := client.NewClient(ctx, log.WithField("component", "client"), token, opt.realnames)
 	if err != nil {
 		log.Fatalf("Failed to create API client: %v", err)
 	}

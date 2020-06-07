@@ -21,11 +21,12 @@ type Client struct {
 	ctx             context.Context
 	client          *githubv4.Client
 	log             logrus.FieldLogger
+	realnames       bool
 	requests        map[string]int
 	remainingPoints int
 }
 
-func NewClient(ctx context.Context, log logrus.FieldLogger, token string) (*Client, error) {
+func NewClient(ctx context.Context, log logrus.FieldLogger, token string, realnames bool) (*Client, error) {
 	if token == "" {
 		return nil, errors.New("token cannot be empty")
 	}
@@ -42,6 +43,7 @@ func NewClient(ctx context.Context, log logrus.FieldLogger, token string) (*Clie
 		ctx:             ctx,
 		client:          client,
 		log:             log,
+		realnames:       realnames,
 		requests:        map[string]int{},
 		remainingPoints: 0,
 	}, nil

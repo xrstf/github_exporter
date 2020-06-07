@@ -14,6 +14,7 @@ type BuildContext struct {
 
 type PullRequest struct {
 	Number    int
+	Author    string
 	State     githubv4.PullRequestState
 	CreatedAt time.Time
 	UpdatedAt time.Time

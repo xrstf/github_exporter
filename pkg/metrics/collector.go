@@ -85,6 +85,7 @@ func (mc *Collector) collectRepoPullRequests(ch chan<- prometheus.Metric, repo *
 		infoLabels := []string{
 			repoName,
 			strconv.Itoa(number),
+			pr.Author,
 			strings.ToLower(string(pr.State)),
 		}
 		infoLabels = append(infoLabels, prow.PullRequestLabels(&pr)...)
@@ -115,6 +116,7 @@ func (mc *Collector) collectRepoIssues(ch chan<- prometheus.Metric, repo *github
 		infoLabels := []string{
 			repoName,
 			strconv.Itoa(number),
+			issue.Author,
 			strings.ToLower(string(issue.State)),
 		}
 		infoLabels = append(infoLabels, prow.IssueLabels(&issue)...)
@@ -154,7 +156,7 @@ func (m stateLabelMap) ToMetrics(ch chan<- prometheus.Metric, repo *github.Repos
 
 	for state, counts := range m {
 		for label, count := range counts {
-			ch <- prometheus.MustNewConstMetric(issueLabelCount, prometheus.GaugeValue, float64(count), repoName, label, strings.ToLower(state))
+			ch <- prometheus.MustNewConstMetric(metric, prometheus.GaugeValue, float64(count), repoName, label, strings.ToLower(state))
 		}
 	}
 }
