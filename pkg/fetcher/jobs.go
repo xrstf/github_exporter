@@ -71,7 +71,7 @@ func (f *Fetcher) processUpdatePullRequestsJob(repo *github.Repository, log logr
 	}
 
 	f.removeJob(repo, job)
-	f.dequeuePullRequests(repo, fetchedNumbers)
+	f.dequeuePullRequests(repo, meta.numbers)
 
 	return err
 }
@@ -203,7 +203,7 @@ func (f *Fetcher) processUpdateIssuesJob(repo *github.Repository, log logrus.Fie
 	}
 
 	f.removeJob(repo, job)
-	f.dequeueIssues(repo, fetchedNumbers)
+	f.dequeueIssues(repo, meta.numbers)
 
 	return err
 }
