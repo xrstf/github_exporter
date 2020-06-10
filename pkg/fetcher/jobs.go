@@ -66,7 +66,9 @@ func (f *Fetcher) processUpdatePullRequestsJob(repo *github.Repository, log logr
 		repo.AddPullRequests(prs)
 	}
 
-	if len(deleted) > 0 {
+	// only delete not found PRs from our local cache if the request was a success, otherwise
+	// we would remove all PRs if e.g. GitHub is unavailable
+	if err == nil && len(deleted) > 0 {
 		repo.DeletePullRequests(deleted)
 	}
 
@@ -198,7 +200,9 @@ func (f *Fetcher) processUpdateIssuesJob(repo *github.Repository, log logrus.Fie
 		repo.AddIssues(issues)
 	}
 
-	if len(deleted) > 0 {
+	// only delete not found issues from our local cache if the request was a success, otherwise
+	// we would remove all issues if e.g. GitHub is unavailable
+	if err == nil && len(deleted) > 0 {
 		repo.DeleteIssues(deleted)
 	}
 
