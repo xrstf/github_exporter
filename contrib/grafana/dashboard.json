@@ -1528,12 +1528,6 @@
           "interval": "",
           "legendFormat": "points",
           "refId": "A"
-        },
-        {
-          "expr": "sum(github_exporter_api_costs_total)",
-          "interval": "",
-          "legendFormat": "total costs",
-          "refId": "B"
         }
       ],
       "thresholds": [],
