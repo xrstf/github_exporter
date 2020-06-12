@@ -176,21 +176,14 @@ And a few more metrics for monitoring the exporter itself are available as well:
 * `github_exporter_api_points_remaining` is a gauge representing the remaining
   API points. 5k points can be consumed per hour, with resets after 1 hour.
 
-## Longterm storage
+## Long-term storage
 
-If you plan on performing longterm analysis over repositories, make sure to put proper
+If you plan on performing long-term analysis over repositories, make sure to put proper
 recording rules into place so that queries can be performed quickly. The exporter
 intentionally does not pre-aggregate most things, as to not spam Prometheus or restrict
 the available information.
 
-A good example is a query for "milestone completion percentage for open milestones":
-
-```
-max by (repo, number) (
-  sum by (repo, number) (github_exporter_milestone_issues{state="closed"}) /
-  sum by (repo, number) (github_exporter_milestone_issues)
-) * on (repo, number) (github_exporter_milestone_info{state="open"})
-```
+A few example rules can be found in `contrib/prometheus/rules.yaml`.
 
 ## License
 
