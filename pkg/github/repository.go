@@ -15,7 +15,20 @@ type Repository struct {
 	Issues       map[int]Issue
 	Milestones   map[int]Milestone
 	Labels       []string
-	lock         sync.RWMutex
+	DiskUsage    int
+	Forks        int
+	Stargazers   int
+	Watchers     int
+	IsPrivate    bool
+	IsArchived   bool
+	IsDisabled   bool
+	IsFork       bool
+	IsLocked     bool
+	IsMirror     bool
+	IsTemplate   bool
+	Languages    map[string]int
+
+	lock sync.RWMutex
 }
 
 func NewRepository(owner string, name string) *Repository {
@@ -26,6 +39,7 @@ func NewRepository(owner string, name string) *Repository {
 		Issues:       map[int]Issue{},
 		Milestones:   map[int]Milestone{},
 		Labels:       []string{},
+		Languages:    map[string]int{},
 		lock:         sync.RWMutex{},
 	}
 }

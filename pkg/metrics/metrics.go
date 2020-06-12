@@ -8,6 +8,93 @@ import (
 
 var (
 	//////////////////////////////////////////////
+	// repository
+
+	repositoryDiskUsage = prometheus.NewDesc(
+		"github_exporter_repo_disk_usage_bytes",
+		"Repository size in bytes",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryForks = prometheus.NewDesc(
+		"github_exporter_repo_forks",
+		"Number of forks of this repository",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryStargazers = prometheus.NewDesc(
+		"github_exporter_repo_stargazers",
+		"Number of stargazers for this repository",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryWatchers = prometheus.NewDesc(
+		"github_exporter_repo_watchers",
+		"Number of watchers for this repository",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryPrivate = prometheus.NewDesc(
+		"github_exporter_repo_is_private",
+		"1 if the repository is private, 0 otherwise",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryArchived = prometheus.NewDesc(
+		"github_exporter_repo_is_archived",
+		"1 if the repository is archived, 0 otherwise",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryDisabled = prometheus.NewDesc(
+		"github_exporter_repo_is_disabled",
+		"1 if the repository is disabled, 0 otherwise",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryFork = prometheus.NewDesc(
+		"github_exporter_repo_is_fork",
+		"1 if the repository is a fork, 0 otherwise",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryLocked = prometheus.NewDesc(
+		"github_exporter_repo_is_locked",
+		"1 if the repository is locked, 0 otherwise",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryMirror = prometheus.NewDesc(
+		"github_exporter_repo_is_mirror",
+		"1 if the repository is a mirror, 0 otherwise",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryTemplate = prometheus.NewDesc(
+		"github_exporter_repo_is_template",
+		"1 if the repository is a template, 0 otherwise",
+		[]string{"repo"},
+		nil,
+	)
+
+	repositoryLanguageSize = prometheus.NewDesc(
+		"github_exporter_repo_language_size_bytes",
+		"Number of bytes in the repository detected as using a given language",
+		[]string{"repo", "language"},
+		nil,
+	)
+
+	//////////////////////////////////////////////
 	// pull requests
 
 	pullRequestInfo *prometheus.Desc

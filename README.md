@@ -94,7 +94,22 @@ Usage of ./github_exporter:
 **All** metrics are labelled with `repo=(full repo name)`, for example
 `repo="xrstf/github_exporter"`.
 
-The following metrics are available:
+For each repository, the following metrics are available:
+
+* `github_exporter_repo_disk_usage_bytes`
+* `github_exporter_repo_forks`
+* `github_exporter_repo_stargazers`
+* `github_exporter_repo_watchers`
+* `github_exporter_repo_is_private`
+* `github_exporter_repo_is_archived`
+* `github_exporter_repo_is_disabled`
+* `github_exporter_repo_is_fork`
+* `github_exporter_repo_is_locked`
+* `github_exporter_repo_is_mirror`
+* `github_exporter_repo_is_template`
+* `github_exporter_repo_language_size_bytes` is additionally labelled with `language`.
+
+For pull requests, these metrics are available:
 
 * `github_exporter_pr_info` contains lots of metadata labels and always has a constant
   value of `1`. Labels are:
@@ -107,6 +122,9 @@ The following metrics are available:
 
   * `size/*` is reflected as a `size` label (e.g. the `size/xs` label on GitHub becomes
     a `size="xs"` label on the Prometheus metric).
+  * `team/*` is reflected as a `team` label.
+  * `kind/*` is reflected as a `kind` label.
+  * `priority/*` is reflected as a `priority` label.
   * `approved` is reflected as a boolean `approved` label.
   * `lgtm` is reflected as a boolean `lgtm` label.
   * `do-no-merge/*` is reflected as a boolean `pending` label.

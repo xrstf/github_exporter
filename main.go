@@ -21,6 +21,7 @@ import (
 type options struct {
 	repositories             repositoryList
 	realnames                bool
+	repoRefreshInterval      time.Duration
 	prRefreshInterval        time.Duration
 	prResyncInterval         time.Duration
 	prDepth                  int
@@ -43,6 +44,7 @@ type AppContext struct {
 
 func main() {
 	opt := options{
+		repoRefreshInterval:      5 * time.Minute,
 		prRefreshInterval:        5 * time.Minute,
 		prResyncInterval:         12 * time.Hour,
 		prDepth:                  -1,
@@ -57,6 +59,7 @@ func main() {
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
 	flag.BoolVar(&opt.realnames, "realnames", opt.realnames, "use usernames instead of internal IDs for author labels (this will make metrics contain personally identifiable information)")
+	flag.DurationVar(&opt.repoRefreshInterval, "repo-refresh-interval", opt.repoRefreshInterval, "time in between repository metadata refreshes")
 	flag.IntVar(&opt.prDepth, "pr-depth", opt.prDepth, "max number of pull requests to fetch per repository upon startup (-1 disables the limit, 0 disables PR fetching entirely)")
 	flag.DurationVar(&opt.prRefreshInterval, "pr-refresh-interval", opt.prRefreshInterval, "time in between PR refreshes")
 	flag.DurationVar(&opt.prResyncInterval, "pr-resync-interval", opt.prResyncInterval, "time in between full PR re-syncs")
@@ -84,10 +87,6 @@ func main() {
 	// validate CLI flags
 	if len(opt.repositories) == 0 {
 		log.Fatal("No -repo defined.")
-	}
-
-	if opt.prDepth == 0 && opt.issueDepth == 0 && opt.milestoneDepth == 0 {
-		log.Fatal("Both Pull Requests, Issues and Milestones are disabled. No point in running this application.")
 	}
 
 	if opt.prRefreshInterval >= opt.prResyncInterval {
@@ -149,11 +148,20 @@ func setup(ctx AppContext, log logrus.FieldLogger) {
 	// it's likely that we trigger GitHub's anti abuse system
 	log.Info("Initializing repositories…")
 
+	hasLabelledMetrics := ctx.options.prDepth != 0 || ctx.options.issueDepth != 0 || ctx.options.milestoneDepth != 0
+
 	for identifier, repo := range repositories {
 		repoLog := log.WithField("repo", identifier)
 
 		repoLog.Info("Scheduling initial scans…")
-		ctx.fetcher.EnqueueLabelUpdate(repo)
+		ctx.fetcher.EnqueueRepoUpdate(repo)
+
+		// keep repository metadata up-to-date
+		go refreshRepositoryInfoWorker(ctx, repoLog, repo)
+
+		if hasLabelledMetrics {
+			ctx.fetcher.EnqueueLabelUpdate(repo)
+		}
 
 		if ctx.options.prDepth != 0 {
 			ctx.fetcher.EnqueuePullRequestScan(repo, ctx.options.prDepth)
@@ -185,6 +193,13 @@ func setup(ctx AppContext, log logrus.FieldLogger) {
 			// in a much larger interval, crawl all existing milestones to detect status changes
 			go resyncMilestonesWorker(ctx, repoLog, repo)
 		}
+	}
+}
+
+func refreshRepositoryInfoWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
+	for _ = range time.NewTicker(ctx.options.repoRefreshInterval).C {
+		log.Debug("Refreshing repository metadata…")
+		ctx.fetcher.EnqueueRepoUpdate(repo)
 	}
 }
 

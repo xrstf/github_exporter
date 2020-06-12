@@ -54,6 +54,10 @@ func makeJobQueues(repos map[string]*github.Repository) map[string]jobQueue {
 	return queues
 }
 
+func (f *Fetcher) EnqueueRepoUpdate(r *github.Repository) {
+	f.enqueueJob(r, updateRepoInfoJobKey, nil)
+}
+
 func (f *Fetcher) EnqueueLabelUpdate(r *github.Repository) {
 	f.enqueueJob(r, updateLabelsJobKey, nil)
 }
@@ -342,6 +346,8 @@ func (f *Fetcher) processJob(repo *github.Repository, job string, data interface
 	switch job {
 	case updateLabelsJobKey:
 		err = f.processUpdateLabelsJob(repo, log, job)
+	case updateRepoInfoJobKey:
+		err = f.processUpdateRepoInfos(repo, log, job)
 	case updatePullRequestsJobKey:
 		err = f.processUpdatePullRequestsJob(repo, log, job, data)
 	case findUpdatedPullRequestsJobKey:

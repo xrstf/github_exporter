@@ -69,6 +69,10 @@ func (mc *Collector) Collect(ch chan<- prometheus.Metric) {
 }
 
 func (mc *Collector) collectRepository(ch chan<- prometheus.Metric, repo *github.Repository) error {
+	if err := mc.collectRepoInfo(ch, repo); err != nil {
+		return err
+	}
+
 	if err := mc.collectRepoPullRequests(ch, repo); err != nil {
 		return err
 	}
@@ -79,6 +83,36 @@ func (mc *Collector) collectRepository(ch chan<- prometheus.Metric, repo *github
 
 	if err := mc.collectRepoMilestones(ch, repo); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func boolVal(b bool) float64 {
+	if b {
+		return 1
+	}
+
+	return 0
+}
+
+func (mc *Collector) collectRepoInfo(ch chan<- prometheus.Metric, repo *github.Repository) error {
+	repoName := repo.FullName()
+
+	ch <- constMetric(repositoryDiskUsage, prometheus.GaugeValue, float64(repo.DiskUsage), repoName)
+	ch <- constMetric(repositoryForks, prometheus.GaugeValue, float64(repo.Forks), repoName)
+	ch <- constMetric(repositoryStargazers, prometheus.GaugeValue, float64(repo.Stargazers), repoName)
+	ch <- constMetric(repositoryWatchers, prometheus.GaugeValue, float64(repo.Watchers), repoName)
+	ch <- constMetric(repositoryPrivate, prometheus.GaugeValue, boolVal(repo.IsPrivate), repoName)
+	ch <- constMetric(repositoryArchived, prometheus.GaugeValue, boolVal(repo.IsArchived), repoName)
+	ch <- constMetric(repositoryDisabled, prometheus.GaugeValue, boolVal(repo.IsDisabled), repoName)
+	ch <- constMetric(repositoryFork, prometheus.GaugeValue, boolVal(repo.IsFork), repoName)
+	ch <- constMetric(repositoryLocked, prometheus.GaugeValue, boolVal(repo.IsLocked), repoName)
+	ch <- constMetric(repositoryMirror, prometheus.GaugeValue, boolVal(repo.IsMirror), repoName)
+	ch <- constMetric(repositoryTemplate, prometheus.GaugeValue, boolVal(repo.IsTemplate), repoName)
+
+	for language, size := range repo.Languages {
+		ch <- constMetric(repositoryLanguageSize, prometheus.GaugeValue, float64(size), repoName, language)
 	}
 
 	return nil
