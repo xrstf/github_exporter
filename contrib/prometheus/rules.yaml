@@ -10,5 +10,5 @@ groups:
 
   - record: ':github_exporter_repo_open_milestone_completion:'
     expr: |
-      :github_exporter_repo_milstone_completion: *
+      :github_exporter_repo_milestone_completion: *
       on (repo, number) (github_exporter_milestone_info{state="open"})
