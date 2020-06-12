@@ -17,6 +17,7 @@ type Fetcher struct {
 	jobQueues         map[string]jobQueue
 	pullRequestQueues map[string]prioritizedIntegerQueue
 	issueQueues       map[string]prioritizedIntegerQueue
+	milestoneQueues   map[string]prioritizedIntegerQueue
 	lock              sync.RWMutex
 }
 
@@ -28,6 +29,7 @@ func NewFetcher(client *client.Client, repos map[string]*github.Repository, log 
 		jobQueues:         makeJobQueues(repos),
 		pullRequestQueues: makePrioritizedIntegerQueues(repos),
 		issueQueues:       makePrioritizedIntegerQueues(repos),
+		milestoneQueues:   makePrioritizedIntegerQueues(repos),
 		lock:              sync.RWMutex{},
 	}
 }
@@ -88,6 +90,22 @@ func (f *Fetcher) enqueueUpdatedIssues(r *github.Repository, numbers []int) {
 	})
 }
 
+func (f *Fetcher) EnqueueUpdatedMilestones(r *github.Repository) {
+	f.enqueueJob(r, findUpdatedMilestonesJobKey, nil)
+}
+
+func (f *Fetcher) EnqueueMilestoneScan(r *github.Repository, max int) {
+	f.enqueueJob(r, scanMilestonesJobKey, scanMilestonesJobMeta{
+		max: max,
+	})
+}
+
+func (f *Fetcher) enqueueUpdatedMilestones(r *github.Repository, numbers []int) {
+	f.enqueueJob(r, updateMilestonesJobKey, updateMilestonesJobMeta{
+		numbers: numbers,
+	})
+}
+
 func (f *Fetcher) enqueueJob(r *github.Repository, key string, data interface{}) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
@@ -111,6 +129,14 @@ func (f *Fetcher) EnqueuePriorityIssues(r *github.Repository, numbers []int) {
 
 func (f *Fetcher) EnqueueRegularIssues(r *github.Repository, numbers []int) {
 	f.enqueue(r, numbers, f.issueQueues, false)
+}
+
+func (f *Fetcher) EnqueuePriorityMilestones(r *github.Repository, numbers []int) {
+	f.enqueue(r, numbers, f.milestoneQueues, true)
+}
+
+func (f *Fetcher) EnqueueRegularMilestones(r *github.Repository, numbers []int) {
+	f.enqueue(r, numbers, f.milestoneQueues, false)
 }
 
 func (f *Fetcher) enqueue(r *github.Repository, numbers []int, queues map[string]prioritizedIntegerQueue, priority bool) {
@@ -145,6 +171,14 @@ func (f *Fetcher) PriorityIssueQueueSize(r *github.Repository) int {
 
 func (f *Fetcher) RegularIssueQueueSize(r *github.Repository) int {
 	return f.queueSize(r, f.issueQueues, false)
+}
+
+func (f *Fetcher) PriorityMilestoneQueueSize(r *github.Repository) int {
+	return f.queueSize(r, f.milestoneQueues, true)
+}
+
+func (f *Fetcher) RegularMilestoneQueueSize(r *github.Repository) int {
+	return f.queueSize(r, f.milestoneQueues, false)
 }
 
 func (f *Fetcher) queueSize(r *github.Repository, queues map[string]prioritizedIntegerQueue, priority bool) int {
@@ -198,6 +232,13 @@ func (f *Fetcher) Worker() {
 			continue
 		}
 
+		// try batching up milestones next
+		repo, candidates = f.getMilestoneBatch(10, client.MaxMilestonesPerQuery)
+		if repo != nil {
+			f.enqueueUpdatedMilestones(repo, candidates)
+			continue
+		}
+
 		// no repo has enough items for a good batch; in order to not burn
 		// CPU cycles, we will wait a bit and check again. But we don't wait
 		// forever, otherwise repositories with very few PRs might never get
@@ -222,6 +263,12 @@ func (f *Fetcher) Worker() {
 			continue
 		}
 
+		repo, candidates = f.getMilestoneBatch(1, client.MaxMilestonesPerQuery)
+		if repo != nil {
+			f.enqueueUpdatedMilestones(repo, candidates)
+			continue
+		}
+
 		// all repository queues are entirely empty, we finished the
 		// force flush and can remember the time; this means on the next
 		// iteration we will begin to sleep again.
@@ -231,19 +278,22 @@ func (f *Fetcher) Worker() {
 	}
 }
 
+// the scan jobs have priority over everything else, as other jobs are based on it
+var priorityJobs = []string{
+	scanIssuesJobKey,
+	scanPullRequestsJobKey,
+	scanMilestonesJobKey,
+}
+
 func (f *Fetcher) getNextJob() (*github.Repository, string, interface{}) {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
 
 	for fullName, queue := range f.jobQueues {
-		// the scan jobs have priority over everything else, as other jobs are based on it
-
-		if data, ok := queue[scanIssuesJobKey]; ok {
-			return f.repositories[fullName], scanIssuesJobKey, data
-		}
-
-		if data, ok := queue[scanPullRequestsJobKey]; ok {
-			return f.repositories[fullName], scanPullRequestsJobKey, data
+		for _, job := range priorityJobs {
+			if data, ok := queue[job]; ok {
+				return f.repositories[fullName], job, data
+			}
 		}
 
 		for job, data := range queue {
@@ -260,6 +310,10 @@ func (f *Fetcher) getPullRequestBatch(minBatchSize int, maxBatchSize int) (*gith
 
 func (f *Fetcher) getIssueBatch(minBatchSize int, maxBatchSize int) (*github.Repository, []int) {
 	return f.getBatch(f.issueQueues, minBatchSize, maxBatchSize)
+}
+
+func (f *Fetcher) getMilestoneBatch(minBatchSize int, maxBatchSize int) (*github.Repository, []int) {
+	return f.getBatch(f.milestoneQueues, minBatchSize, maxBatchSize)
 }
 
 func (f *Fetcher) getBatch(queues map[string]prioritizedIntegerQueue, minBatchSize int, maxBatchSize int) (*github.Repository, []int) {
@@ -300,6 +354,12 @@ func (f *Fetcher) processJob(repo *github.Repository, job string, data interface
 		err = f.processFindUpdatedIssuesJob(repo, log, job)
 	case scanIssuesJobKey:
 		err = f.processScanIssuesJob(repo, log, job, data)
+	case updateMilestonesJobKey:
+		err = f.processUpdateMilestonesJob(repo, log, job, data)
+	case findUpdatedMilestonesJobKey:
+		err = f.processFindUpdatedMilestonesJob(repo, log, job)
+	case scanMilestonesJobKey:
+		err = f.processScanMilestonesJob(repo, log, job, data)
 	default:
 		f.log.Fatalf("Encountered unknown job type %q for repo %q", job, repo.FullName())
 	}
@@ -326,6 +386,11 @@ func (f *Fetcher) dequeuePullRequests(repo *github.Repository, numbers []int) {
 func (f *Fetcher) dequeueIssues(repo *github.Repository, numbers []int) {
 	f.log.Debugf("Removing %d fetched issues.", len(numbers))
 	f.dequeue(repo, f.issueQueues, numbers)
+}
+
+func (f *Fetcher) dequeueMilestones(repo *github.Repository, numbers []int) {
+	f.log.Debugf("Removing %d fetched milestones.", len(numbers))
+	f.dequeue(repo, f.milestoneQueues, numbers)
 }
 
 func (f *Fetcher) dequeue(repo *github.Repository, queues map[string]prioritizedIntegerQueue, numbers []int) {

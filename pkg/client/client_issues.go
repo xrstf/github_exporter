@@ -62,10 +62,10 @@ func (c *Client) GetRepositoryIssues(owner string, name string, numbers []int) (
 	c.countRequest(owner, name, q.RateLimit)
 
 	c.log.WithFields(logrus.Fields{
-		"owner": owner,
-		"name":  name,
-		"prs":   len(numbers),
-		"cost":  q.RateLimit.Cost,
+		"owner":  owner,
+		"name":   name,
+		"issues": len(numbers),
+		"cost":   q.RateLimit.Cost,
 	}).Debugf("GetRepositoryIssues()")
 
 	if err != nil && !strings.Contains(err.Error(), "Could not resolve to an Issue") {
@@ -74,8 +74,8 @@ func (c *Client) GetRepositoryIssues(owner string, name string, numbers []int) (
 
 	now := time.Now()
 	issues := []github.Issue{}
-	for _, pr := range q.GetAll() {
-		issues = append(issues, c.convertIssue(pr, now))
+	for _, issue := range q.GetAll() {
+		issues = append(issues, c.convertIssue(issue, now))
 	}
 
 	return issues, nil

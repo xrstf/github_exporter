@@ -25,6 +25,11 @@ var (
 		string(githubv4.IssueStateOpen),
 		string(githubv4.IssueStateClosed),
 	}
+
+	AllMilestoneStates = []string{
+		string(githubv4.MilestoneStateOpen),
+		string(githubv4.MilestoneStateClosed),
+	}
 )
 
 type Collector struct {
@@ -47,6 +52,7 @@ func (mc *Collector) Describe(ch chan<- *prometheus.Desc) {
 
 func (mc *Collector) Collect(ch chan<- prometheus.Metric) {
 	requestCounts := mc.client.GetRequestCounts()
+	costs := mc.client.GetTotalCosts()
 
 	for _, repo := range mc.repos {
 		fullName := repo.FullName()
@@ -55,10 +61,11 @@ func (mc *Collector) Collect(ch chan<- prometheus.Metric) {
 			return mc.collectRepository(ch, r)
 		})
 
-		ch <- prometheus.MustNewConstMetric(githubRequestsTotal, prometheus.CounterValue, float64(requestCounts[fullName]), fullName)
+		ch <- constMetric(githubRequestsTotal, prometheus.CounterValue, float64(requestCounts[fullName]), fullName)
+		ch <- constMetric(githubCostsTotal, prometheus.CounterValue, float64(costs[fullName]), fullName)
 	}
 
-	ch <- prometheus.MustNewConstMetric(githubPointsRemaining, prometheus.GaugeValue, float64(mc.client.GetRemainingPoints()))
+	ch <- constMetric(githubPointsRemaining, prometheus.GaugeValue, float64(mc.client.GetRemainingPoints()))
 }
 
 func (mc *Collector) collectRepository(ch chan<- prometheus.Metric, repo *github.Repository) error {
@@ -70,6 +77,10 @@ func (mc *Collector) collectRepository(ch chan<- prometheus.Metric, repo *github
 		return err
 	}
 
+	if err := mc.collectRepoMilestones(ch, repo); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -78,28 +89,30 @@ func (mc *Collector) collectRepoPullRequests(ch chan<- prometheus.Metric, repo *
 	repoName := repo.FullName()
 
 	for number, pr := range repo.PullRequests {
+		num := strconv.Itoa(number)
+
 		for _, label := range pr.Labels {
 			totals[string(pr.State)][label]++
 		}
 
 		infoLabels := []string{
 			repoName,
-			strconv.Itoa(number),
+			num,
 			pr.Author,
 			strings.ToLower(string(pr.State)),
 		}
 		infoLabels = append(infoLabels, prow.PullRequestLabels(&pr)...)
 
-		ch <- prometheus.MustNewConstMetric(pullRequestInfo, prometheus.GaugeValue, 1, infoLabels...)
-		ch <- prometheus.MustNewConstMetric(pullRequestCreatedAt, prometheus.GaugeValue, float64(pr.CreatedAt.Unix()), repoName, strconv.Itoa(number))
-		ch <- prometheus.MustNewConstMetric(pullRequestUpdatedAt, prometheus.GaugeValue, float64(pr.UpdatedAt.Unix()), repoName, strconv.Itoa(number))
-		ch <- prometheus.MustNewConstMetric(pullRequestFetchedAt, prometheus.GaugeValue, float64(pr.FetchedAt.Unix()), repoName, strconv.Itoa(number))
+		ch <- constMetric(pullRequestInfo, prometheus.GaugeValue, 1, infoLabels...)
+		ch <- constMetric(pullRequestCreatedAt, prometheus.GaugeValue, float64(pr.CreatedAt.Unix()), repoName, num)
+		ch <- constMetric(pullRequestUpdatedAt, prometheus.GaugeValue, float64(pr.UpdatedAt.Unix()), repoName, num)
+		ch <- constMetric(pullRequestFetchedAt, prometheus.GaugeValue, float64(pr.FetchedAt.Unix()), repoName, num)
 	}
 
 	totals.ToMetrics(ch, repo, pullRequestLabelCount)
 
-	ch <- prometheus.MustNewConstMetric(pullRequestQueueSize, prometheus.GaugeValue, float64(mc.fetcher.PriorityPullRequestQueueSize(repo)), repoName, "priority")
-	ch <- prometheus.MustNewConstMetric(pullRequestQueueSize, prometheus.GaugeValue, float64(mc.fetcher.RegularPullRequestQueueSize(repo)), repoName, "regular")
+	ch <- constMetric(pullRequestQueueSize, prometheus.GaugeValue, float64(mc.fetcher.PriorityPullRequestQueueSize(repo)), repoName, "priority")
+	ch <- constMetric(pullRequestQueueSize, prometheus.GaugeValue, float64(mc.fetcher.RegularPullRequestQueueSize(repo)), repoName, "regular")
 
 	return nil
 }
@@ -109,30 +122,73 @@ func (mc *Collector) collectRepoIssues(ch chan<- prometheus.Metric, repo *github
 	repoName := repo.FullName()
 
 	for number, issue := range repo.Issues {
+		num := strconv.Itoa(number)
+
 		for _, label := range issue.Labels {
 			totals[string(issue.State)][label]++
 		}
 
 		infoLabels := []string{
 			repoName,
-			strconv.Itoa(number),
+			num,
 			issue.Author,
 			strings.ToLower(string(issue.State)),
 		}
 		infoLabels = append(infoLabels, prow.IssueLabels(&issue)...)
 
-		ch <- prometheus.MustNewConstMetric(issueInfo, prometheus.GaugeValue, 1, infoLabels...)
-		ch <- prometheus.MustNewConstMetric(issueCreatedAt, prometheus.GaugeValue, float64(issue.CreatedAt.Unix()), repoName, strconv.Itoa(number))
-		ch <- prometheus.MustNewConstMetric(issueUpdatedAt, prometheus.GaugeValue, float64(issue.UpdatedAt.Unix()), repoName, strconv.Itoa(number))
-		ch <- prometheus.MustNewConstMetric(issueFetchedAt, prometheus.GaugeValue, float64(issue.FetchedAt.Unix()), repoName, strconv.Itoa(number))
+		ch <- constMetric(issueInfo, prometheus.GaugeValue, 1, infoLabels...)
+		ch <- constMetric(issueCreatedAt, prometheus.GaugeValue, float64(issue.CreatedAt.Unix()), repoName, num)
+		ch <- constMetric(issueUpdatedAt, prometheus.GaugeValue, float64(issue.UpdatedAt.Unix()), repoName, num)
+		ch <- constMetric(issueFetchedAt, prometheus.GaugeValue, float64(issue.FetchedAt.Unix()), repoName, num)
 	}
 
 	totals.ToMetrics(ch, repo, issueLabelCount)
 
-	ch <- prometheus.MustNewConstMetric(issueQueueSize, prometheus.GaugeValue, float64(mc.fetcher.PriorityIssueQueueSize(repo)), repoName, "priority")
-	ch <- prometheus.MustNewConstMetric(issueQueueSize, prometheus.GaugeValue, float64(mc.fetcher.RegularIssueQueueSize(repo)), repoName, "regular")
+	ch <- constMetric(issueQueueSize, prometheus.GaugeValue, float64(mc.fetcher.PriorityIssueQueueSize(repo)), repoName, "priority")
+	ch <- constMetric(issueQueueSize, prometheus.GaugeValue, float64(mc.fetcher.RegularIssueQueueSize(repo)), repoName, "regular")
 
 	return nil
+}
+
+func (mc *Collector) collectRepoMilestones(ch chan<- prometheus.Metric, repo *github.Repository) error {
+	repoName := repo.FullName()
+	openState := strings.ToLower(string(githubv4.MilestoneStateOpen))
+	closedState := strings.ToLower(string(githubv4.MilestoneStateClosed))
+
+	for number, milestone := range repo.Milestones {
+		num := strconv.Itoa(number)
+
+		var closedAt int64
+		if milestone.ClosedAt != nil {
+			closedAt = milestone.ClosedAt.Unix()
+		}
+
+		var dueOn int64
+		if milestone.DueOn != nil {
+			dueOn = milestone.DueOn.Unix()
+		}
+
+		ch <- constMetric(milestoneInfo, prometheus.GaugeValue, 1, repoName, num, strings.ToLower(string(milestone.State)), milestone.Title)
+		ch <- constMetric(milestoneCreatedAt, prometheus.GaugeValue, float64(milestone.CreatedAt.Unix()), repoName, num)
+		ch <- constMetric(milestoneUpdatedAt, prometheus.GaugeValue, float64(milestone.UpdatedAt.Unix()), repoName, num)
+		ch <- constMetric(milestoneClosedAt, prometheus.GaugeValue, float64(closedAt), repoName, num)
+		ch <- constMetric(milestoneDueOn, prometheus.GaugeValue, float64(dueOn), repoName, num)
+		ch <- constMetric(milestoneFetchedAt, prometheus.GaugeValue, float64(milestone.FetchedAt.Unix()), repoName, num)
+		ch <- constMetric(milestoneIssues, prometheus.GaugeValue, float64(milestone.OpenIssues), repoName, num, "issue", openState)
+		ch <- constMetric(milestoneIssues, prometheus.GaugeValue, float64(milestone.ClosedIssues), repoName, num, "issue", closedState)
+		ch <- constMetric(milestoneIssues, prometheus.GaugeValue, float64(milestone.OpenPullRequests), repoName, num, "pullrequest", openState)
+		ch <- constMetric(milestoneIssues, prometheus.GaugeValue, float64(milestone.ClosedPullRequests), repoName, num, "pullrequest", closedState)
+	}
+
+	ch <- constMetric(milestoneQueueSize, prometheus.GaugeValue, float64(mc.fetcher.PriorityMilestoneQueueSize(repo)), repoName, "priority")
+	ch <- constMetric(milestoneQueueSize, prometheus.GaugeValue, float64(mc.fetcher.RegularMilestoneQueueSize(repo)), repoName, "regular")
+
+	return nil
+}
+
+// constMetric just helps reducing code noise
+func constMetric(desc *prometheus.Desc, valueType prometheus.ValueType, value float64, labelValues ...string) prometheus.Metric {
+	return prometheus.MustNewConstMetric(desc, valueType, value, labelValues...)
 }
 
 type stateLabelMap map[string]map[string]int

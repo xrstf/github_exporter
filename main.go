@@ -19,16 +19,19 @@ import (
 )
 
 type options struct {
-	repositories         repositoryList
-	realnames            bool
-	prRefreshInterval    time.Duration
-	prResyncInterval     time.Duration
-	prDepth              int
-	issueRefreshInterval time.Duration
-	issueResyncInterval  time.Duration
-	issueDepth           int
-	listenAddr           string
-	debugLog             bool
+	repositories             repositoryList
+	realnames                bool
+	prRefreshInterval        time.Duration
+	prResyncInterval         time.Duration
+	prDepth                  int
+	issueRefreshInterval     time.Duration
+	issueResyncInterval      time.Duration
+	issueDepth               int
+	milestoneRefreshInterval time.Duration
+	milestoneResyncInterval  time.Duration
+	milestoneDepth           int
+	listenAddr               string
+	debugLog                 bool
 }
 
 type AppContext struct {
@@ -40,13 +43,16 @@ type AppContext struct {
 
 func main() {
 	opt := options{
-		prRefreshInterval:    5 * time.Minute,
-		prResyncInterval:     12 * time.Hour,
-		prDepth:              -1,
-		issueRefreshInterval: 5 * time.Minute,
-		issueResyncInterval:  12 * time.Hour,
-		issueDepth:           -1,
-		listenAddr:           ":9612",
+		prRefreshInterval:        5 * time.Minute,
+		prResyncInterval:         12 * time.Hour,
+		prDepth:                  -1,
+		issueRefreshInterval:     5 * time.Minute,
+		issueResyncInterval:      12 * time.Hour,
+		issueDepth:               -1,
+		milestoneRefreshInterval: 5 * time.Minute,
+		milestoneResyncInterval:  12 * time.Hour,
+		milestoneDepth:           -1,
+		listenAddr:               ":9612",
 	}
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
@@ -57,6 +63,9 @@ func main() {
 	flag.IntVar(&opt.issueDepth, "issue-depth", opt.issueDepth, "max number of issues to fetch per repository upon startup (-1 disables the limit, 0 disables issue fetching entirely)")
 	flag.DurationVar(&opt.issueRefreshInterval, "issue-refresh-interval", opt.issueRefreshInterval, "time in between issue refreshes")
 	flag.DurationVar(&opt.issueResyncInterval, "issue-resync-interval", opt.issueResyncInterval, "time in between full issue re-syncs")
+	flag.IntVar(&opt.milestoneDepth, "milestone-depth", opt.milestoneDepth, "max number of milestones to fetch per repository upon startup (-1 disables the limit, 0 disables milestone fetching entirely)")
+	flag.DurationVar(&opt.milestoneRefreshInterval, "milestone-refresh-interval", opt.milestoneRefreshInterval, "time in between milestone refreshes")
+	flag.DurationVar(&opt.milestoneResyncInterval, "milestone-resync-interval", opt.milestoneResyncInterval, "time in between full milestone re-syncs")
 	flag.StringVar(&opt.listenAddr, "listen", opt.listenAddr, "address and port to listen on")
 	flag.BoolVar(&opt.debugLog, "debug", opt.debugLog, "enable more verbose logging")
 	flag.Parse()
@@ -77,8 +86,8 @@ func main() {
 		log.Fatal("No -repo defined.")
 	}
 
-	if opt.prDepth == 0 && opt.issueDepth == 0 {
-		log.Fatal("Both Pull Requests and Issues are disabled. No point in running this application.")
+	if opt.prDepth == 0 && opt.issueDepth == 0 && opt.milestoneDepth == 0 {
+		log.Fatal("Both Pull Requests, Issues and Milestones are disabled. No point in running this application.")
 	}
 
 	if opt.prRefreshInterval >= opt.prResyncInterval {
@@ -87,6 +96,10 @@ func main() {
 
 	if opt.issueRefreshInterval >= opt.issueResyncInterval {
 		log.Fatal("-issue-refresh-interval must be < than -issue-resync-interval.")
+	}
+
+	if opt.milestoneRefreshInterval >= opt.milestoneResyncInterval {
+		log.Fatal("-milestone-refresh-interval must be < than -milestone-resync-interval.")
 	}
 
 	token := os.Getenv("GITHUB_TOKEN")
@@ -162,6 +175,16 @@ func setup(ctx AppContext, log logrus.FieldLogger) {
 			// in a much larger interval, crawl all existing issues to detect status changes
 			go resyncIssuesWorker(ctx, repoLog, repo)
 		}
+
+		if ctx.options.milestoneDepth != 0 {
+			ctx.fetcher.EnqueueMilestoneScan(repo, ctx.options.milestoneDepth)
+
+			// keep refreshing open milestones
+			go refreshMilestonesWorker(ctx, repoLog, repo)
+
+			// in a much larger interval, crawl all existing milestones to detect status changes
+			go resyncMilestonesWorker(ctx, repoLog, repo)
+		}
 	}
 }
 
@@ -221,6 +244,34 @@ func resyncIssuesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Rep
 		}
 
 		ctx.fetcher.EnqueueRegularIssues(repo, numbers)
+		ctx.fetcher.EnqueueLabelUpdate(repo)
+	}
+}
+
+func refreshMilestonesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
+	for _ = range time.NewTicker(ctx.options.milestoneRefreshInterval).C {
+		log.Debug("Refreshing open pull milestones…")
+
+		numbers := []int{}
+		for _, milestone := range repo.GetMilestones(githubv4.MilestoneStateOpen) {
+			numbers = append(numbers, milestone.Number)
+		}
+
+		ctx.fetcher.EnqueuePriorityMilestones(repo, numbers)
+		ctx.fetcher.EnqueueUpdatedMilestones(repo)
+	}
+}
+
+func resyncMilestonesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
+	for _ = range time.NewTicker(ctx.options.milestoneResyncInterval).C {
+		log.Info("Synchronizing repository milestones…")
+
+		numbers := []int{}
+		for _, milestone := range repo.GetMilestones(githubv4.MilestoneStateClosed) {
+			numbers = append(numbers, milestone.Number)
+		}
+
+		ctx.fetcher.EnqueueRegularMilestones(repo, numbers)
 		ctx.fetcher.EnqueueLabelUpdate(repo)
 	}
 }

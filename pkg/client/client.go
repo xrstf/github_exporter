@@ -24,6 +24,7 @@ type Client struct {
 	realnames       bool
 	requests        map[string]int
 	remainingPoints int
+	totalCosts      map[string]int
 }
 
 func NewClient(ctx context.Context, log logrus.FieldLogger, token string, realnames bool) (*Client, error) {
@@ -46,6 +47,7 @@ func NewClient(ctx context.Context, log logrus.FieldLogger, token string, realna
 		realnames:       realnames,
 		requests:        map[string]int{},
 		remainingPoints: 0,
+		totalCosts:      map[string]int{},
 	}, nil
 }
 
@@ -57,11 +59,19 @@ func (c *Client) GetRequestCounts() map[string]int {
 	return c.requests
 }
 
+func (c *Client) GetTotalCosts() map[string]int {
+	return c.totalCosts
+}
+
 func (c *Client) countRequest(owner string, name string, rateLimit rateLimit) {
 	key := fmt.Sprintf("%s/%s", owner, name)
-	val := c.requests[key]
 
+	val := c.requests[key]
 	c.requests[key] = val + 1
+
+	val = c.totalCosts[key]
+	c.totalCosts[key] = val + rateLimit.Cost
+
 	c.remainingPoints = rateLimit.Remaining
 }
 

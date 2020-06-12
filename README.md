@@ -1,7 +1,7 @@
 # xrstf's GitHub Exporter for Prometheus
 
 This exporter exposes Prometheus metrics for a list of pre-configured GitHub repositories.
-The focus is on providing more insights about issues and pull requests.
+The focus is on providing more insights about issues, pull requests and milestones.
 
 ![Grafana Screenshot](https://github.com/xrstf/github_exporter/blob/master/grafana/screenshot.png?raw=true)
 
@@ -10,29 +10,30 @@ repositories (5k+ PRs) it's recommended to tweak the settings a bit.
 
 ## Operation
 
-The goal of this particular exporter is to provide metrics for **all** pull requests and
-issues within a given set of repositories. At the same time, **open** issues/PRs should be
-refreshed much more often and quickly than older data.
+The goal of this particular exporter is to provide metrics for **all** pull requests, issues
+and milestones (collectively called "items") from here on) within a given set of repositories.
+At the same time, **open** items should be refreshed much more often and quickly than older
+data.
 
-To achieve this, the exporter upon startup scans all repositories for all PRs/issues. After
+To achieve this, the exporter upon startup scans all repositories for all items. After
 this is complete, it will
 
-* fetch the most recently updated 100 PRs/issues (to detect new elements and elements
+* fetch the most recently updated 100 items (to detect new elements and elements
   whose status has changed),
-* re-fetch all open PRs/issues frequently (every 5 minutes by default) and
-* re-fetch **all** PRs/issues every 12 hours by default.
+* re-fetch all open items frequently (every 5 minutes by default) and
+* re-fetch **all** items every 12 hours by default.
 
 While the scheduling for the re-fetches happens concurrently in multiple go routines,
 the fetching itself is done sequentially to avoid triggering GitHub's anti-abuse system.
 
-Fetching open PRs/issues has higher priority, so that even large amounts of old PRs/issues
-cannot interfere with the freshness of open PRs/issues.
+Fetching open items has higher priority, so that even large amounts of old items
+cannot interfere with the freshness of open items.
 
-It is possible to limit the initial scan (using `-pr-depth` and `-issue-depth`), so that
-for very large repositories not all items are fetched. But this only limits the initial
-scan, over time the exporter will learn about new PRs/issues and not forget the old ones
-(and since it always keeps all PRs/issues up-to-date, the number of items fetched will
-slooooowly over time grow).
+It is possible to limit the initial scan (using `-pr-depth`, `-issue-depth` and `-milestone-depth`),
+so that for very large repositories not all items are fetched. But this only limits the
+initial scan, over time the exporter will learn about new items and not forget the old ones
+(and since it always keeps all items up-to-date, the number of items fetched will slooooowly
+over time grow).
 
 Jobs are always removed from the queue, even if they failed. The exporter relies on the
 goroutines to re-schedule them later anyway, and this prevents flooding GitHub when the
@@ -70,6 +71,12 @@ Usage of ./github_exporter:
         time in between full issue re-syncs (default 12h0m0s)
   -listen string
         address and port to listen on (default ":9612")
+  -milestone-depth int
+        max number of milestones to fetch per repository upon startup (-1 disables the limit, 0 disables milestone fetching entirely) (default -1)
+  -milestone-refresh-interval duration
+        time in between milestone refreshes (default 5m0s)
+  -milestone-resync-interval duration
+        time in between full milestone re-syncs (default 12h0m0s)
   -pr-depth int
         max number of pull requests to fetch per repository upon startup (-1 disables the limit, 0 disables PR fetching entirely) (default -1)
   -pr-refresh-interval duration
@@ -125,16 +132,47 @@ The PR metrics are mirrored for issues:
 * `github_exporter_issue_updated_at`
 * `github_exporter_issue_fetched_at`
 
+The metrics for milestones are similar:
+
+* `github_exporter_milestone_info` has `repo`, `number`, `title` and `state` labels.
+* `github_exporter_milestone_issues` counts the number of open/closed issues/PRs
+  for a given milestone, so it has `repo`, `number`, `kind` (issue or pullrequest)
+  and `state` labels.
+* `github_exporter_milestone_created_at`
+* `github_exporter_milestone_updated_at`
+* `github_exporter_milestone_fetched_at`
+* `github_exporter_milestone_closed_at` is optional and 0 if the milestone is open.
+* `github_exporter_milestone_due_on` is optional and 0 if no due date is set.
+
 And a few more metrics for monitoring the exporter itself are available as well:
 
 * `github_exporter_pr_queue_size` is the number of PRs currently queued for
   being fetched from the API. This is split via the `queue` label into `priority`
   (open PRs) and `regular` (older PRs).
 * `github_exporter_issue_queue_size` is the same as for the PR queue.
+* `github_exporter_milestone_queue_size` is the same as for the PR queue.
 * `github_exporter_api_requests_total` counts the number of API requests per
   repository.
+* `github_exporter_api_costs_total` is the sum of costs (in API points) that have
+  been used, grouped by `repo`.
 * `github_exporter_api_points_remaining` is a gauge representing the remaining
   API points. 5k points can be consumed per hour, with resets after 1 hour.
+
+## Longterm storage
+
+If you plan on performing longterm analysis over repositories, make sure to put proper
+recording rules into place so that queries can be performed quickly. The exporter
+intentionally does not pre-aggregate most things, as to not spam Prometheus or restrict
+the available information.
+
+A good example is a query for "milestone completion percentage for open milestones":
+
+```
+max by (repo, number) (
+  sum by (repo, number) (github_exporter_milestone_issues{state="closed"}) /
+  sum by (repo, number) (github_exporter_milestone_issues)
+) * on (repo, number) (github_exporter_milestone_info{state="open"})
+```
 
 ## License
 

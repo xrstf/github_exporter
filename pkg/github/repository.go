@@ -13,6 +13,7 @@ type Repository struct {
 
 	PullRequests map[int]PullRequest
 	Issues       map[int]Issue
+	Milestones   map[int]Milestone
 	Labels       []string
 	lock         sync.RWMutex
 }
@@ -23,6 +24,7 @@ func NewRepository(owner string, name string) *Repository {
 		Name:         name,
 		PullRequests: map[int]PullRequest{},
 		Issues:       map[int]Issue{},
+		Milestones:   map[int]Milestone{},
 		Labels:       []string{},
 		lock:         sync.RWMutex{},
 	}
@@ -84,12 +86,12 @@ func (d *Repository) GetPullRequests(states ...githubv4.PullRequestState) []Pull
 	return numbers
 }
 
-func (d *Repository) AddIssues(prs []Issue) {
+func (d *Repository) AddIssues(issues []Issue) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
-	for _, pr := range prs {
-		d.Issues[pr.Number] = pr
+	for _, issue := range issues {
+		d.Issues[issue.Number] = issue
 	}
 }
 
@@ -107,14 +109,14 @@ func (d *Repository) GetIssues(states ...githubv4.IssueState) []Issue {
 	defer d.lock.RUnlock()
 
 	numbers := []Issue{}
-	for _, pr := range d.Issues {
+	for _, issue := range d.Issues {
 		include := false
 
 		if len(states) == 0 {
 			include = true
 		} else {
 			for _, state := range states {
-				if pr.State == state {
+				if issue.State == state {
 					include = true
 					break
 				}
@@ -122,7 +124,52 @@ func (d *Repository) GetIssues(states ...githubv4.IssueState) []Issue {
 		}
 
 		if include {
-			numbers = append(numbers, pr)
+			numbers = append(numbers, issue)
+		}
+	}
+
+	return numbers
+}
+
+func (d *Repository) AddMilestones(milestones []Milestone) {
+	d.lock.Lock()
+	defer d.lock.Unlock()
+
+	for _, milestone := range milestones {
+		d.Milestones[milestone.Number] = milestone
+	}
+}
+
+func (d *Repository) DeleteMilestones(numbers []int) {
+	d.lock.Lock()
+	defer d.lock.Unlock()
+
+	for _, number := range numbers {
+		delete(d.Milestones, number)
+	}
+}
+
+func (d *Repository) GetMilestones(states ...githubv4.MilestoneState) []Milestone {
+	d.lock.RLock()
+	defer d.lock.RUnlock()
+
+	numbers := []Milestone{}
+	for _, milestone := range d.Milestones {
+		include := false
+
+		if len(states) == 0 {
+			include = true
+		} else {
+			for _, state := range states {
+				if milestone.State == state {
+					include = true
+					break
+				}
+			}
+		}
+
+		if include {
+			numbers = append(numbers, milestone)
 		}
 	}
 
