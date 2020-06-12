@@ -17,6 +17,87 @@
         "x": 0,
         "y": 0
       },
+      "id": 27,
+      "panels": [],
+      "title": "Milestones",
+      "type": "row"
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "editable": true,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "decimals": 0,
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 33
+              },
+              {
+                "color": "green",
+                "value": 66
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 25,
+      "options": {
+        "displayMode": "lcd",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "7.0.3",
+      "targets": [
+        {
+          "expr": "github_exporter_milestone_info * on (repo, number) group_right(title) (:github_exporter_repo_open_milestone_completion:{repo=~\"$repo\"})",
+          "interval": "",
+          "legendFormat": "{{ repo }} / {{ title }}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Open Milestone Completion",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
       "id": 7,
       "panels": [],
       "title": "Pull Requests",
@@ -42,7 +123,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 14
       },
       "hiddenSeries": false,
       "id": 4,
@@ -157,7 +238,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 1
+        "y": 14
       },
       "id": 16,
       "interval": null,
@@ -235,7 +316,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 1
+        "y": 14
       },
       "id": 14,
       "interval": null,
@@ -290,7 +371,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 24
       },
       "hiddenSeries": false,
       "id": 19,
@@ -405,7 +486,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 11
+        "y": 24
       },
       "id": 22,
       "interval": null,
@@ -484,7 +565,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 11
+        "y": 24
       },
       "id": 15,
       "interval": null,
@@ -533,7 +614,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 34
       },
       "id": 18,
       "panels": [],
@@ -560,7 +641,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 35
       },
       "hiddenSeries": false,
       "id": 13,
@@ -675,7 +756,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 22
+        "y": 35
       },
       "id": 23,
       "interval": null,
@@ -753,7 +834,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 22
+        "y": 35
       },
       "id": 20,
       "interval": null,
@@ -832,7 +913,7 @@
         "h": 10,
         "w": 6,
         "x": 12,
-        "y": 32
+        "y": 45
       },
       "id": 24,
       "interval": null,
@@ -913,7 +994,7 @@
         "h": 10,
         "w": 6,
         "x": 18,
-        "y": 32
+        "y": 45
       },
       "id": 21,
       "interval": null,
@@ -956,7 +1037,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 55
       },
       "id": 9,
       "panels": [],
@@ -983,7 +1064,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 56
       },
       "hiddenSeries": false,
       "id": 5,
@@ -1080,7 +1161,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 56
       },
       "hiddenSeries": false,
       "id": 12,
@@ -1164,7 +1245,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 53
+        "y": 66
       },
       "id": 11,
       "panels": [],
@@ -1191,7 +1272,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 54
+        "y": 67
       },
       "hiddenSeries": false,
       "id": 3,
@@ -1289,7 +1370,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 54
+        "y": 67
       },
       "hiddenSeries": false,
       "id": 2,
@@ -1322,6 +1403,12 @@
           "interval": "",
           "legendFormat": "points",
           "refId": "A"
+        },
+        {
+          "expr": "sum(github_exporter_api_costs_total)",
+          "interval": "",
+          "legendFormat": "total costs",
+          "refId": "B"
         }
       ],
       "thresholds": [],

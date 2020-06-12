@@ -4,7 +4,7 @@ set -euo pipefail
 
 cd $(dirname $0)/../
 
-for filename in grafana/*.json; do
+for filename in contrib/grafana/*.json; do
   tmpfile="$filename.tmp"
 
   cat "$filename" | \
