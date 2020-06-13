@@ -5,7 +5,7 @@ The focus is on providing more insights about issues, pull requests and mileston
 
 ![Grafana Screenshot](https://github.com/xrstf/github_exporter/blob/master/contrib/grafana/screenshot.png?raw=true)
 
-It uses GitHub's API v4 and tries its best to not exceed the request quotas, but fore large
+It uses GitHub's API v4 and tries its best to not exceed the request quotas, but for large
 repositories (5k+ PRs) it's recommended to tweak the settings a bit.
 
 ## Operation
