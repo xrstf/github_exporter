@@ -11,7 +11,7 @@ repositories (5k+ PRs) it's recommended to tweak the settings a bit.
 ## Operation
 
 The goal of this particular exporter is to provide metrics for **all** pull requests, issues
-and milestones (collectively called "items") from here on) within a given set of repositories.
+and milestones (collectively called "items" from here on) within a given set of repositories.
 At the same time, **open** items should be refreshed much more often and quickly than older
 data.
 
