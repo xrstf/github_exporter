@@ -1187,12 +1187,121 @@
       "fillGradient": 5,
       "gridPos": {
         "h": 10,
-        "w": 12,
+        "w": 6,
         "x": 0,
         "y": 56
       },
       "hiddenSeries": false,
       "id": 5,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum (github_exporter_pr_queue_size{repo=~\"$repo\"})",
+          "interval": "",
+          "legendFormat": "Pull Requests",
+          "refId": "A"
+        },
+        {
+          "expr": "sum (github_exporter_issue_queue_size{repo=~\"$repo\"})",
+          "interval": "",
+          "legendFormat": "Issues",
+          "refId": "B"
+        },
+        {
+          "expr": "sum (github_exporter_milestone_queue_size{repo=~\"$repo\"})",
+          "interval": "",
+          "legendFormat": "Milestones",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "All Queues",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "editable": true,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 5,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 6,
+        "y": 56
+      },
+      "hiddenSeries": false,
+      "id": 30,
       "legend": {
         "avg": false,
         "current": false,
@@ -1225,7 +1334,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": "1h",
+      "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
       "title": "Pull Requests - Queue Size",
@@ -1284,7 +1393,7 @@
       "fillGradient": 5,
       "gridPos": {
         "h": 10,
-        "w": 12,
+        "w": 6,
         "x": 12,
         "y": 56
       },
@@ -1322,10 +1431,107 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": "1h",
+      "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
       "title": "Issues - Queue Size",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "editable": true,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 5,
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 18,
+        "y": 56
+      },
+      "hiddenSeries": false,
+      "id": 29,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum by (repo) (github_exporter_milestone_queue_size{repo=~\"$repo\"})",
+          "interval": "",
+          "legendFormat": "{{ repo }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Milestones - Queue Size",
       "tooltip": {
         "shared": true,
         "sort": 0,
