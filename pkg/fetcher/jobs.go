@@ -30,22 +30,24 @@ func (f *Fetcher) processUpdateLabelsJob(repo *github.Repository, log logrus.Fie
 func (f *Fetcher) processUpdateRepoInfos(repo *github.Repository, log logrus.FieldLogger, job string) error {
 	info, err := f.client.RepositoryInfo(repo.Owner, repo.Name)
 
-	repo.Locked(func(r *github.Repository) error {
-		r.DiskUsage = info.DiskUsage
-		r.Forks = info.Forks
-		r.Stargazers = info.Stargazers
-		r.Watchers = info.Watchers
-		r.IsPrivate = info.IsPrivate
-		r.IsArchived = info.IsArchived
-		r.IsDisabled = info.IsDisabled
-		r.IsFork = info.IsFork
-		r.IsLocked = info.IsLocked
-		r.IsMirror = info.IsMirror
-		r.IsTemplate = info.IsTemplate
-		r.Languages = info.Languages
+	if info != nil {
+		repo.Locked(func(r *github.Repository) error {
+			r.DiskUsage = info.DiskUsage
+			r.Forks = info.Forks
+			r.Stargazers = info.Stargazers
+			r.Watchers = info.Watchers
+			r.IsPrivate = info.IsPrivate
+			r.IsArchived = info.IsArchived
+			r.IsDisabled = info.IsDisabled
+			r.IsFork = info.IsFork
+			r.IsLocked = info.IsLocked
+			r.IsMirror = info.IsMirror
+			r.IsTemplate = info.IsTemplate
+			r.Languages = info.Languages
 
-		return nil
-	})
+			return nil
+		})
+	}
 
 	f.removeJob(repo, job)
 
