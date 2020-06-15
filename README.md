@@ -57,7 +57,16 @@ as the `GITHUB_TOKEN` environment variable.
 
 By default, the exporter listens on `0.0.0.0:9612`.
 
-All configuration happens via commandline arguments:
+All configuration happens via commandline arguments. At the bare minimum, you need to
+specify a single repository to scrape:
+
+```
+./github_exporter -repo myself/my-repository
+```
+
+You can configure multiple `-repo` (which is also recommended over running the exporter
+multiple times in parallel, so a single exporter can serialize all API requests) and
+tweak the exporter further using the available flags:
 
 ```
 Usage of ./github_exporter:
