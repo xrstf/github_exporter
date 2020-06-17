@@ -57,7 +57,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -84,7 +84,7 @@
       "title": "Stargazers",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "transparent": true,
@@ -155,7 +155,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -182,7 +182,7 @@
       "title": "Forks",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "transparent": true,
@@ -253,7 +253,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -280,7 +280,7 @@
       "title": "Watchers",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "transparent": true,
@@ -351,7 +351,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -378,7 +378,7 @@
       "title": "Disk Usage",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "transparent": true,
@@ -556,7 +556,7 @@
       },
       "lines": true,
       "linewidth": 1,
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "options": {
         "dataLinks": []
       },
@@ -584,7 +584,7 @@
       "title": "Open Milestone Completion",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 1,
         "value_type": "individual"
       },
       "transparent": true,
@@ -651,7 +651,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 13
+            "y": 25
           },
           "hiddenSeries": false,
           "id": 4,
@@ -666,7 +666,7 @@
           },
           "lines": true,
           "linewidth": 1,
-          "nullPointMode": "null",
+          "nullPointMode": "connected",
           "options": {
             "dataLinks": []
           },
@@ -693,7 +693,7 @@
           "title": "Open Pull Requests",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 2,
             "value_type": "individual"
           },
           "transparent": true,
@@ -707,7 +707,7 @@
           },
           "yaxes": [
             {
-              "decimals": null,
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -766,7 +766,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 13
+            "y": 25
           },
           "id": 16,
           "interval": null,
@@ -844,7 +844,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 13
+            "y": 25
           },
           "id": 14,
           "interval": null,
@@ -899,7 +899,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 35
           },
           "hiddenSeries": false,
           "id": 19,
@@ -914,7 +914,7 @@
           },
           "lines": true,
           "linewidth": 1,
-          "nullPointMode": "null",
+          "nullPointMode": "connected",
           "options": {
             "dataLinks": []
           },
@@ -941,7 +941,7 @@
           "title": "Pending Rate",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 1,
             "value_type": "individual"
           },
           "transparent": true,
@@ -1014,7 +1014,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 23
+            "y": 35
           },
           "id": 22,
           "interval": null,
@@ -1093,7 +1093,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 23
+            "y": 35
           },
           "id": 15,
           "interval": null,
@@ -1170,7 +1170,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 14
+            "y": 26
           },
           "hiddenSeries": false,
           "id": 13,
@@ -1185,7 +1185,7 @@
           },
           "lines": true,
           "linewidth": 1,
-          "nullPointMode": "null",
+          "nullPointMode": "connected",
           "options": {
             "dataLinks": []
           },
@@ -1212,7 +1212,7 @@
           "title": "Open Issues",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 2,
             "value_type": "individual"
           },
           "transparent": true,
@@ -1226,7 +1226,7 @@
           },
           "yaxes": [
             {
-              "decimals": null,
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -1285,7 +1285,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 14
+            "y": 26
           },
           "id": 23,
           "interval": null,
@@ -1363,7 +1363,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 14
+            "y": 26
           },
           "id": 20,
           "interval": null,
@@ -1442,7 +1442,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 24
+            "y": 36
           },
           "id": 24,
           "interval": null,
@@ -1523,7 +1523,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 24
+            "y": 36
           },
           "id": 21,
           "interval": null,
@@ -1594,7 +1594,7 @@
             "h": 10,
             "w": 6,
             "x": 0,
-            "y": 15
+            "y": 27
           },
           "hiddenSeries": false,
           "id": 5,
@@ -1648,7 +1648,7 @@
           "title": "All Queues",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 2,
             "value_type": "individual"
           },
           "transparent": true,
@@ -1662,11 +1662,12 @@
           },
           "yaxes": [
             {
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -1675,7 +1676,7 @@
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -1703,7 +1704,7 @@
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 15
+            "y": 27
           },
           "hiddenSeries": false,
           "id": 30,
@@ -1745,7 +1746,7 @@
           "title": "Pull Requests - Queue Size",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 2,
             "value_type": "individual"
           },
           "transparent": true,
@@ -1759,11 +1760,12 @@
           },
           "yaxes": [
             {
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -1800,7 +1802,7 @@
             "h": 10,
             "w": 6,
             "x": 12,
-            "y": 15
+            "y": 27
           },
           "hiddenSeries": false,
           "id": 12,
@@ -1842,7 +1844,7 @@
           "title": "Issues - Queue Size",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 2,
             "value_type": "individual"
           },
           "transparent": true,
@@ -1856,11 +1858,12 @@
           },
           "yaxes": [
             {
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -1869,7 +1872,7 @@
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -1897,7 +1900,7 @@
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 15
+            "y": 27
           },
           "hiddenSeries": false,
           "id": 29,
@@ -1939,7 +1942,7 @@
           "title": "Milestones - Queue Size",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 2,
             "value_type": "individual"
           },
           "transparent": true,
@@ -1953,11 +1956,12 @@
           },
           "yaxes": [
             {
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -1966,7 +1970,7 @@
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -2009,7 +2013,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 16
+            "y": 28
           },
           "hiddenSeries": false,
           "id": 3,
@@ -2107,7 +2111,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 16
+            "y": 28
           },
           "hiddenSeries": false,
           "id": 2,
@@ -2176,7 +2180,7 @@
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -2231,9 +2235,9 @@
           "fillGradient": 5,
           "gridPos": {
             "h": 10,
-            "w": 8,
+            "w": 12,
             "x": 0,
-            "y": 7
+            "y": 29
           },
           "hiddenSeries": false,
           "id": 39,
@@ -2251,7 +2255,7 @@
           "linewidth": 1,
           "links": [],
           "maxPerRow": 3,
-          "nullPointMode": "null",
+          "nullPointMode": "connected",
           "options": {
             "dataLinks": []
           },
@@ -2297,11 +2301,12 @@
           },
           "yaxes": [
             {
+              "decimals": null,
               "format": "bytes",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -2310,7 +2315,7 @@
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -2333,14 +2338,14 @@
         "allValue": null,
         "current": {},
         "datasource": "Prometheus",
-        "definition": "label_values(github_exporter_repo_info, repo)",
+        "definition": "label_values(github_exporter_repo_stargazers, repo)",
         "hide": 0,
         "includeAll": true,
         "label": "Repositories",
         "multi": true,
         "name": "repo",
         "options": [],
-        "query": "label_values(github_exporter_repo_info, repo)",
+        "query": "label_values(github_exporter_repo_stargazers, repo)",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
