@@ -14,6 +14,7 @@ for filename in contrib/grafana/*.json; do
     jq '(.templating.list[] | select(.type=="datasource") | .current) = {}' | \
     jq '(.templating.list[] | select(.type=="interval") | .current) = {}' | \
     jq '(.panels[] | select(.scopedVars!=null) | .scopedVars) = {}' | \
+    jq '(.panels[].panels?[]? | select(.scopedVars!=null) | .scopedVars) = {}' | \
     jq '(.templating.list[] | select(.type=="datasource") | .hide) = 2' | \
     jq '(.annotations.list) = []' | \
     jq '(.links) = []' | \
@@ -29,6 +30,7 @@ for filename in contrib/grafana/*.json; do
     jq '(.graphTooltip) = 1' | \
     jq '(.version) = 1' | \
     jq 'del(.panels[] | select(.repeatPanelId!=null))' | \
+    jq 'del(.panels[].panels?[]? | select(.repeatPanelId!=null))' | \
     jq 'del(.id)' | \
     jq 'del(.iteration)' | \
     jq --sort-keys '.' > "$tmpfile"
