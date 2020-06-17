@@ -32,7 +32,7 @@ func (f *Fetcher) processUpdateRepoInfos(repo *github.Repository, log logrus.Fie
 
 	if info != nil {
 		repo.Locked(func(r *github.Repository) error {
-			r.DiskUsage = info.DiskUsage
+			r.DiskUsageBytes = info.DiskUsage * 1024 // convert kbytes to bytes
 			r.Forks = info.Forks
 			r.Stargazers = info.Stargazers
 			r.Watchers = info.Watchers

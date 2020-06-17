@@ -35,6 +35,7 @@ type repositoryInfoQuery struct {
 }
 
 type RepositoryInfo struct {
+	// DiskUsage is returned in KBytes
 	DiskUsage  int
 	Forks      int
 	Stargazers int

@@ -99,7 +99,7 @@ func boolVal(b bool) float64 {
 func (mc *Collector) collectRepoInfo(ch chan<- prometheus.Metric, repo *github.Repository) error {
 	repoName := repo.FullName()
 
-	ch <- constMetric(repositoryDiskUsage, prometheus.GaugeValue, float64(repo.DiskUsage), repoName)
+	ch <- constMetric(repositoryDiskUsage, prometheus.GaugeValue, float64(repo.DiskUsageBytes), repoName)
 	ch <- constMetric(repositoryForks, prometheus.GaugeValue, float64(repo.Forks), repoName)
 	ch <- constMetric(repositoryStargazers, prometheus.GaugeValue, float64(repo.Stargazers), repoName)
 	ch <- constMetric(repositoryWatchers, prometheus.GaugeValue, float64(repo.Watchers), repoName)

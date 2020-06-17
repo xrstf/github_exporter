@@ -11,22 +11,22 @@ type Repository struct {
 	Owner string
 	Name  string
 
-	PullRequests map[int]PullRequest
-	Issues       map[int]Issue
-	Milestones   map[int]Milestone
-	Labels       []string
-	DiskUsage    int
-	Forks        int
-	Stargazers   int
-	Watchers     int
-	IsPrivate    bool
-	IsArchived   bool
-	IsDisabled   bool
-	IsFork       bool
-	IsLocked     bool
-	IsMirror     bool
-	IsTemplate   bool
-	Languages    map[string]int
+	PullRequests   map[int]PullRequest
+	Issues         map[int]Issue
+	Milestones     map[int]Milestone
+	Labels         []string
+	DiskUsageBytes int
+	Forks          int
+	Stargazers     int
+	Watchers       int
+	IsPrivate      bool
+	IsArchived     bool
+	IsDisabled     bool
+	IsFork         bool
+	IsLocked       bool
+	IsMirror       bool
+	IsTemplate     bool
+	Languages      map[string]int
 
 	lock sync.RWMutex
 }
