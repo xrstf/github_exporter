@@ -282,8 +282,11 @@ func (f *Fetcher) Worker() {
 	}
 }
 
-// the scan jobs have priority over everything else, as other jobs are based on it
 var priorityJobs = []string{
+	// prioritizing this makes useful metrics available earlier
+	updateRepoInfoJobKey,
+
+	// the scan jobs have priority over everything else, as other jobs are based on it
 	scanIssuesJobKey,
 	scanPullRequestsJobKey,
 	scanMilestonesJobKey,
