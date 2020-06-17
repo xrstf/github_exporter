@@ -55,9 +55,15 @@ func (mc *Collector) Collect(ch chan<- prometheus.Metric) {
 	costs := mc.client.GetTotalCosts()
 
 	for _, repo := range mc.repos {
+		// do not publish metrics for repos for which we have not even fetched
+		// the bare minimum of information
+		if repo.FetchedAt == nil {
+			continue
+		}
+
 		fullName := repo.FullName()
 
-		repo.RLocked(func(r *github.Repository) error {
+		_ = repo.RLocked(func(r *github.Repository) error {
 			return mc.collectRepository(ch, r)
 		})
 

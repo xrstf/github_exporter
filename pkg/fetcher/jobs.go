@@ -1,6 +1,8 @@
 package fetcher
 
 import (
+	"time"
+
 	"github.com/sirupsen/logrus"
 
 	"go.xrstf.de/github_exporter/pkg/github"
@@ -28,10 +30,13 @@ func (f *Fetcher) processUpdateLabelsJob(repo *github.Repository, log logrus.Fie
 
 // processUpdateRepoInfos fetches the repository's metadata.
 func (f *Fetcher) processUpdateRepoInfos(repo *github.Repository, log logrus.FieldLogger, job string) error {
+	now := time.Now()
+
 	info, err := f.client.RepositoryInfo(repo.Owner, repo.Name)
 
 	if info != nil {
-		repo.Locked(func(r *github.Repository) error {
+		_ = repo.Locked(func(r *github.Repository) error {
+			r.FetchedAt = &now
 			r.DiskUsageBytes = info.DiskUsage * 1024 // convert kbytes to bytes
 			r.Forks = info.Forks
 			r.Stargazers = info.Stargazers

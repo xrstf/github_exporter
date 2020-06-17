@@ -13,16 +13,6 @@ func (q integerQueue) fillSliceUpTo(list []int, max int) []int {
 	return list
 }
 
-func (q integerQueue) numbers() []int {
-	result := []int{}
-
-	for number := range q {
-		result = append(result, number)
-	}
-
-	return result
-}
-
 type prioritizedIntegerQueue struct {
 	priority integerQueue
 	regular  integerQueue

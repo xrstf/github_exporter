@@ -3,6 +3,7 @@ package github
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/shurcooL/githubv4"
 )
@@ -27,6 +28,7 @@ type Repository struct {
 	IsMirror       bool
 	IsTemplate     bool
 	Languages      map[string]int
+	FetchedAt      *time.Time
 
 	lock sync.RWMutex
 }
