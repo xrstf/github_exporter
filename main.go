@@ -197,7 +197,7 @@ func setup(ctx AppContext, log logrus.FieldLogger) {
 }
 
 func refreshRepositoryInfoWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
-	for _ = range time.NewTicker(ctx.options.repoRefreshInterval).C {
+	for range time.NewTicker(ctx.options.repoRefreshInterval).C {
 		log.Debug("Refreshing repository metadata…")
 		ctx.fetcher.EnqueueRepoUpdate(repo)
 	}
@@ -208,7 +208,7 @@ func refreshRepositoryInfoWorker(ctx AppContext, log logrus.FieldLogger, repo *g
 // want to closely track the mergability. It also fetches the last 50 updated
 // PRs to find cases where a PR was merged and is not open anymore.
 func refreshPullRequestsWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
-	for _ = range time.NewTicker(ctx.options.prRefreshInterval).C {
+	for range time.NewTicker(ctx.options.prRefreshInterval).C {
 		log.Debug("Refreshing open pull requests…")
 
 		numbers := []int{}
@@ -222,7 +222,7 @@ func refreshPullRequestsWorker(ctx AppContext, log logrus.FieldLogger, repo *git
 }
 
 func resyncPullRequestsWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
-	for _ = range time.NewTicker(ctx.options.prResyncInterval).C {
+	for range time.NewTicker(ctx.options.prResyncInterval).C {
 		log.Info("Synchronizing repository pull requests…")
 
 		numbers := []int{}
@@ -236,7 +236,7 @@ func resyncPullRequestsWorker(ctx AppContext, log logrus.FieldLogger, repo *gith
 }
 
 func refreshIssuesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
-	for _ = range time.NewTicker(ctx.options.issueRefreshInterval).C {
+	for range time.NewTicker(ctx.options.issueRefreshInterval).C {
 		log.Debug("Refreshing open pull issues…")
 
 		numbers := []int{}
@@ -250,7 +250,7 @@ func refreshIssuesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Re
 }
 
 func resyncIssuesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
-	for _ = range time.NewTicker(ctx.options.issueResyncInterval).C {
+	for range time.NewTicker(ctx.options.issueResyncInterval).C {
 		log.Info("Synchronizing repository issues…")
 
 		numbers := []int{}
@@ -264,7 +264,7 @@ func resyncIssuesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Rep
 }
 
 func refreshMilestonesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
-	for _ = range time.NewTicker(ctx.options.milestoneRefreshInterval).C {
+	for range time.NewTicker(ctx.options.milestoneRefreshInterval).C {
 		log.Debug("Refreshing open pull milestones…")
 
 		numbers := []int{}
@@ -278,7 +278,7 @@ func refreshMilestonesWorker(ctx AppContext, log logrus.FieldLogger, repo *githu
 }
 
 func resyncMilestonesWorker(ctx AppContext, log logrus.FieldLogger, repo *github.Repository) {
-	for _ = range time.NewTicker(ctx.options.milestoneResyncInterval).C {
+	for range time.NewTicker(ctx.options.milestoneResyncInterval).C {
 		log.Info("Synchronizing repository milestones…")
 
 		numbers := []int{}

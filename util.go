@@ -35,14 +35,3 @@ func (l *repositoryList) Set(value string) error {
 
 	return nil
 }
-
-type stringSlice []string
-
-func (l *stringSlice) String() string {
-	return fmt.Sprint(*l)
-}
-
-func (l *stringSlice) Set(value string) error {
-	*l = append(*l, value)
-	return nil
-}
