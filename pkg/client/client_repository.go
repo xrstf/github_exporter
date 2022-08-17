@@ -92,3 +92,36 @@ func (c *Client) RepositoryInfo(owner string, name string) (*RepositoryInfo, err
 
 	return info, nil
 }
+
+type repositoriesNamesQuery struct {
+	RateLimit       rateLimit
+	RepositoryOwner struct {
+		Repositories struct {
+			Nodes []struct {
+				Name string
+			}
+		} `graphql:"repositories(last: 100, isFork: false, isLocked: false, affiliations: OWNER)"`
+	} `graphql:"repositoryOwner(login: $login)"`
+}
+
+func (c *Client) RepositoriesNames(login string) ([]string, error) {
+	variables := map[string]interface{}{
+		"login": githubv4.String(login),
+	}
+
+	var q repositoriesNamesQuery
+
+	err := c.client.Query(c.ctx, &q, variables)
+
+	if err != nil {
+		c.log.Error(err)
+		return nil, err
+	}
+
+	repos := []string{}
+	for _, node := range q.RepositoryOwner.Repositories.Nodes {
+		repos = append(repos, node.Name)
+	}
+
+	return repos, nil
+}
