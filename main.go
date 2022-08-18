@@ -137,7 +137,7 @@ func setup(ctx AppContext, log logrus.FieldLogger) {
 	repositories := map[string]*github.Repository{}
 
 	if ctx.options.owner != "" {
-		log.Infof("Fetching all repositories for {}", ctx.options.owner)
+		log.Infof("Fetching all repositories for %s", ctx.options.owner)
 		repoNames, err := ctx.client.RepositoriesNames(ctx.options.owner)
 		if err != nil {
 			log.Fatalf("Failed to recover repositories: %v", err)
