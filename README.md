@@ -96,6 +96,8 @@ Usage of ./github_exporter:
         use usernames instead of internal IDs for author labels (this will make metrics contain personally identifiable information)
   -repo value
         repository (owner/name format) to include, can be given multiple times
+  -owner string
+        github login (username or organization) of the owner of the repositories that will be included. Excludes forked and locked repo, includes 100 first private & public repos
 ```
 
 ## Metrics

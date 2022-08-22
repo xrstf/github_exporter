@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -20,6 +21,7 @@ import (
 
 type options struct {
 	repositories             repositoryList
+	owner                    string
 	realnames                bool
 	repoRefreshInterval      time.Duration
 	prRefreshInterval        time.Duration
@@ -58,6 +60,7 @@ func main() {
 	}
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
+	flag.StringVar(&opt.owner, "owner", opt.owner, "github login (username or organization) of the owner of the repositories that will be included. Excludes forked and locked repo, includes 100 first private & public repos")
 	flag.BoolVar(&opt.realnames, "realnames", opt.realnames, "use usernames instead of internal IDs for author labels (this will make metrics contain personally identifiable information)")
 	flag.DurationVar(&opt.repoRefreshInterval, "repo-refresh-interval", opt.repoRefreshInterval, "time in between repository metadata refreshes")
 	flag.IntVar(&opt.prDepth, "pr-depth", opt.prDepth, "max number of pull requests to fetch per repository upon startup (-1 disables the limit, 0 disables PR fetching entirely)")
@@ -85,8 +88,8 @@ func main() {
 	}
 
 	// validate CLI flags
-	if len(opt.repositories) == 0 {
-		log.Fatal("No -repo defined.")
+	if opt.owner == "" && len(opt.repositories) == 0 {
+		log.Fatal("No -repo nor -owner defined.")
 	}
 
 	if opt.prRefreshInterval >= opt.prResyncInterval {
@@ -132,6 +135,17 @@ func main() {
 
 func setup(ctx AppContext, log logrus.FieldLogger) {
 	repositories := map[string]*github.Repository{}
+
+	if ctx.options.owner != "" {
+		log.Infof("Fetching all repositories for %s", ctx.options.owner)
+		repoNames, err := ctx.client.RepositoriesNames(ctx.options.owner)
+		if err != nil {
+			log.Fatalf("Failed to recover repositories: %v", err)
+		}
+		for _, repoName := range repoNames {
+			repositories[fmt.Sprintf("%s/%s", ctx.options.owner, repoName)] = github.NewRepository(ctx.options.owner, repoName)
+		}
+	}
 
 	// create a PR database for each repo
 	for _, repo := range ctx.options.repositories {
