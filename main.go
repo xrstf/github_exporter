@@ -60,7 +60,7 @@ func main() {
 	}
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
-	flag.StringVar(&opt.owner, "owner", opt.owner, "github login (username or organization) of the owner of the repositories that will be included. Excludes forked and locked repo, include 100 first private & public repos")
+	flag.StringVar(&opt.owner, "owner", opt.owner, "github login (username or organization) of the owner of the repositories that will be included. Excludes forked and locked repo, includes 100 first private & public repos")
 	flag.BoolVar(&opt.realnames, "realnames", opt.realnames, "use usernames instead of internal IDs for author labels (this will make metrics contain personally identifiable information)")
 	flag.DurationVar(&opt.repoRefreshInterval, "repo-refresh-interval", opt.repoRefreshInterval, "time in between repository metadata refreshes")
 	flag.IntVar(&opt.prDepth, "pr-depth", opt.prDepth, "max number of pull requests to fetch per repository upon startup (-1 disables the limit, 0 disables PR fetching entirely)")
