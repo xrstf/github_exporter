@@ -49,6 +49,7 @@ func (f *Fetcher) processUpdateRepoInfos(repo *github.Repository, log logrus.Fie
 			r.IsMirror = info.IsMirror
 			r.IsTemplate = info.IsTemplate
 			r.Languages = info.Languages
+			r.CommitsCount = info.CommitsCount
 
 			return nil
 		})
