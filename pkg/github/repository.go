@@ -28,6 +28,7 @@ type Repository struct {
 	IsMirror       bool
 	IsTemplate     bool
 	Languages      map[string]int
+	CommitsCount   int
 	FetchedAt      *time.Time
 
 	lock sync.RWMutex

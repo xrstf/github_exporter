@@ -116,6 +116,7 @@ func (mc *Collector) collectRepoInfo(ch chan<- prometheus.Metric, repo *github.R
 	ch <- constMetric(repositoryLocked, prometheus.GaugeValue, boolVal(repo.IsLocked), repoName)
 	ch <- constMetric(repositoryMirror, prometheus.GaugeValue, boolVal(repo.IsMirror), repoName)
 	ch <- constMetric(repositoryTemplate, prometheus.GaugeValue, boolVal(repo.IsTemplate), repoName)
+	ch <- constMetric(repositoryCommitsCount, prometheus.GaugeValue, float64(repo.CommitsCount), repoName)
 
 	for language, size := range repo.Languages {
 		ch <- constMetric(repositoryLanguageSize, prometheus.GaugeValue, float64(size), repoName, language)

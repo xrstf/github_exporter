@@ -94,6 +94,13 @@ var (
 		nil,
 	)
 
+	repositoryCommitsCount = prometheus.NewDesc(
+		"github_exporter_repo_commits_count",
+		"Number of commits in the default branch",
+		[]string{"repo"},
+		nil,
+	)
+
 	//////////////////////////////////////////////
 	// pull requests
 

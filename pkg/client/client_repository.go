@@ -31,23 +31,34 @@ type repositoryInfoQuery struct {
 				}
 			}
 		} `graphql:"languages(first: 100)"`
+		DefaultBranchRef struct {
+			Name   string
+			Target struct {
+				Commit struct {
+					History struct {
+						TotalCount int
+					}
+				} `graphql:"... on Commit"`
+			}
+		}
 	} `graphql:"repository(owner: $owner, name: $name)"`
 }
 
 type RepositoryInfo struct {
 	// DiskUsage is returned in KBytes
-	DiskUsage  int
-	Forks      int
-	Stargazers int
-	Watchers   int
-	IsPrivate  bool
-	IsArchived bool
-	IsDisabled bool
-	IsFork     bool
-	IsLocked   bool
-	IsMirror   bool
-	IsTemplate bool
-	Languages  map[string]int
+	DiskUsage    int
+	Forks        int
+	Stargazers   int
+	Watchers     int
+	IsPrivate    bool
+	IsArchived   bool
+	IsDisabled   bool
+	IsFork       bool
+	IsLocked     bool
+	IsMirror     bool
+	IsTemplate   bool
+	Languages    map[string]int
+	CommitsCount int
 }
 
 func (c *Client) RepositoryInfo(owner string, name string) (*RepositoryInfo, error) {
@@ -72,18 +83,19 @@ func (c *Client) RepositoryInfo(owner string, name string) (*RepositoryInfo, err
 	}
 
 	info := &RepositoryInfo{
-		DiskUsage:  q.Repository.DiskUsage,
-		Forks:      q.Repository.ForkCount,
-		Stargazers: q.Repository.Stargazers.TotalCount,
-		Watchers:   q.Repository.Watchers.TotalCount,
-		IsPrivate:  q.Repository.IsPrivate,
-		IsArchived: q.Repository.IsArchived,
-		IsDisabled: q.Repository.IsDisabled,
-		IsFork:     q.Repository.IsFork,
-		IsLocked:   q.Repository.IsLocked,
-		IsMirror:   q.Repository.IsMirror,
-		IsTemplate: q.Repository.IsTemplate,
-		Languages:  map[string]int{},
+		DiskUsage:    q.Repository.DiskUsage,
+		Forks:        q.Repository.ForkCount,
+		Stargazers:   q.Repository.Stargazers.TotalCount,
+		Watchers:     q.Repository.Watchers.TotalCount,
+		IsPrivate:    q.Repository.IsPrivate,
+		IsArchived:   q.Repository.IsArchived,
+		IsDisabled:   q.Repository.IsDisabled,
+		IsFork:       q.Repository.IsFork,
+		IsLocked:     q.Repository.IsLocked,
+		IsMirror:     q.Repository.IsMirror,
+		IsTemplate:   q.Repository.IsTemplate,
+		Languages:    map[string]int{},
+		CommitsCount: q.Repository.DefaultBranchRef.Target.Commit.History.TotalCount,
 	}
 
 	for _, lang := range q.Repository.Languages.Edges {
