@@ -45,7 +45,10 @@ func main() {
 		tpl := template.Must(template.New("tpl").Parse(string(content)))
 
 		var buf bytes.Buffer
-		tpl.Execute(&buf, data)
+		err = tpl.Execute(&buf, data)
+		if err != nil {
+			log.Fatalf("Failed to execute buffer: %v", err)
+		}
 
 		source, err := format.Source(buf.Bytes())
 		if err != nil {
