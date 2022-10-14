@@ -54,7 +54,7 @@ so even if the API is down for an hour, the queue will not fill up with the re-f
 
 You need Go 1.14 installed on your machine.
 
-```
+```sh
 go get go.xrstf.de/github_exporter
 ```
 
@@ -70,7 +70,7 @@ By default, the exporter listens on `0.0.0.0:9612`.
 All configuration happens via commandline arguments. At the bare minimum, you need to
 specify a single repository to scrape:
 
-```
+```sh
 ./github_exporter -repo myself/my-repository
 ```
 
@@ -78,7 +78,7 @@ You can configure multiple `-repo` (which is also recommended over running the e
 multiple times in parallel, so a single exporter can serialize all API requests) and
 tweak the exporter further using the available flags:
 
-```
+```sh
 Usage of ./github_exporter:
   -debug
         enable more verbose logging

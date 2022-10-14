@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	fields   = 100
-	filename = "pkg/client/client_gen.go"
+	fields = 100
 )
 
 func makeRange(min, max int) []int {
