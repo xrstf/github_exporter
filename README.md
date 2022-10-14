@@ -1,6 +1,16 @@
 # xrstf's GitHub Exporter for Prometheus
 
-This exporter exposes Prometheus metrics for a list of pre-configured GitHub repositories.
+[![version](https://img.shields.io/github/v/release/okp4/github-exporter?style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/releases)
+[![lint](https://img.shields.io/github/workflow/status/okp4/github-exporter/Lint?label=lint&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/lint.yml)
+[![build](https://img.shields.io/github/workflow/status/okp4/github-exporter/Build?label=build&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/build.yml)
+[![conventional commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=for-the-badge&logo=conventionalcommits)](https://conventionalcommits.org)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=for-the-badge)](https://github.com/okp4/.github/blob/main/CODE_OF_CONDUCT.md)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg?style=for-the-badge)](https://opensource.org/licenses/BSD-3-Clause)
+
+This exporter is based on [xrstf's work](https://github.com/xrstf/github_exporter).
+We forked this repo to match our needs
+
+It exposes Prometheus metrics for a list of pre-configured GitHub repositories.
 The focus is on providing more insights about issues, pull requests and milestones.
 
 ![Grafana Screenshot](https://github.com/xrstf/github_exporter/blob/master/contrib/grafana/screenshot.png?raw=true)
@@ -119,6 +129,7 @@ For each repository, the following metrics are available:
 * `github_exporter_repo_is_mirror`
 * `github_exporter_repo_is_template`
 * `github_exporter_repo_language_size_bytes` is additionally labelled with `language`.
+* `github_exporter_repo_commits_count`
 
 For pull requests, these metrics are available:
 
