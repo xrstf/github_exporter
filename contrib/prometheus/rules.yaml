@@ -1,18 +1,18 @@
 # These are example rules to make the Grafana dashboard work.
 
 groups:
-- name: github-exporter
-  rules:
-  - record: ':github_exporter_repo_milestone_completion:'
-    expr: |
-      sum by (repo, number) (github_exporter_milestone_issues{state="closed"}) /
-      (sum by (repo, number) (github_exporter_milestone_issues))
+  - name: github-exporter
+    rules:
+      - record: ':github_exporter_repo_milestone_completion:'
+        expr: |
+          sum by (repo, number) (github_exporter_milestone_issues{state="closed"}) /
+          (sum by (repo, number) (github_exporter_milestone_issues))
 
-  - record: ':github_exporter_repo_open_milestone_completion:'
-    expr: |
-      :github_exporter_repo_milestone_completion: *
-      on (repo, number) (github_exporter_milestone_info{state="open"})
+      - record: ':github_exporter_repo_open_milestone_completion:'
+        expr: |
+          :github_exporter_repo_milestone_completion: *
+          on (repo, number) (github_exporter_milestone_info{state="open"})
 
-  - record: 'sum:github_exporter_repo_language_size_bytes:repo'
-    expr: |
-      sum by (repo) (github_exporter_repo_language_size_bytes)
+      - record: 'sum:github_exporter_repo_language_size_bytes:repo'
+        expr: |
+          sum by (repo) (github_exporter_repo_language_size_bytes)
