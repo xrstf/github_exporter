@@ -11,7 +11,7 @@ metadata:
 spec:
   replicas: 1
   strategy:
-    type: Recreate
+    type: RollingUpdate
   selector:
     matchLabels:
       app.kubernetes.io/name: github-exporter
@@ -25,20 +25,20 @@ spec:
     spec:
       containers:
         - name: github-exporter
-          image: 'xrstf/github_exporter:0.3.3'
+          image: 'okp4/github-exporter:latest'
           args:
-          - -listen=0.0.0.0:9162
-          - -repo=xrstf/github_exporter
+            - -listen=0.0.0.0:9162
+            - -repo=xrstf/github_exporter
           env:
-          - name: GITHUB_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: github-token
-                key: token
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-token
+                  key: token
           ports:
-          - name: metrics
-            containerPort: 9162
-            protocol: TCP
+            - name: metrics
+              containerPort: 9162
+              protocol: TCP
           livenessProbe:
             httpGet:
               path: /metrics
