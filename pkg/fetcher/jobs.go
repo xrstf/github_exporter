@@ -29,7 +29,7 @@ func (f *Fetcher) processUpdateLabelsJob(repo *github.Repository, log logrus.Fie
 }
 
 // processUpdateRepoInfos fetches the repository's metadata.
-func (f *Fetcher) processUpdateRepoInfos(repo *github.Repository, log logrus.FieldLogger, job string) error {
+func (f *Fetcher) processUpdateRepoInfos(repo *github.Repository, job string) error {
 	now := time.Now()
 
 	info, err := f.client.RepositoryInfo(repo.Owner, repo.Name)

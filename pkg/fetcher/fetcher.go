@@ -350,7 +350,7 @@ func (f *Fetcher) processJob(repo *github.Repository, job string, data interface
 	case updateLabelsJobKey:
 		err = f.processUpdateLabelsJob(repo, log, job)
 	case updateRepoInfoJobKey:
-		err = f.processUpdateRepoInfos(repo, log, job)
+		err = f.processUpdateRepoInfos(repo, job)
 	case updatePullRequestsJobKey:
 		err = f.processUpdatePullRequestsJob(repo, log, job, data)
 	case findUpdatedPullRequestsJobKey:
