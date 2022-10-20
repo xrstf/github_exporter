@@ -51,11 +51,11 @@ func (d *Repository) FullName() string {
 	return fmt.Sprintf("%s/%s", d.Owner, d.Name)
 }
 
-func (d *Repository) SetLabels(Labels []string) {
+func (d *Repository) SetLabels(labels []string) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 
-	d.Labels = Labels
+	d.Labels = labels
 }
 
 func (d *Repository) AddPullRequests(prs []PullRequest) {
