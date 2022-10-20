@@ -196,9 +196,8 @@ func (f *Fetcher) queueSize(r *github.Repository, queues map[string]prioritizedI
 
 	if priority {
 		return queue.prioritySize()
-	} else {
-		return queue.regularSize()
 	}
+	return queue.regularSize()
 }
 
 func (f *Fetcher) Worker() {
