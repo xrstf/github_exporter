@@ -51,7 +51,7 @@ so even if the API is down for an hour, the queue will not fill up with the re-f
 
 ## Installation
 
-You need Go 1.14 installed on your machine.
+You need Go 1.19 installed on your machine.
 
 ```sh
 make install
