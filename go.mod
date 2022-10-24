@@ -1,4 +1,4 @@
-module go.xrstf.de/github_exporter
+module okp4/github-exporter
 
 go 1.14
 

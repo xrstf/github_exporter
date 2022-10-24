@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"go.xrstf.de/github_exporter/pkg/github"
+	"okp4/github-exporter/pkg/github"
 )
 
 func PullRequestLabelNames() []string {

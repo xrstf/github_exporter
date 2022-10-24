@@ -5,7 +5,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"go.xrstf.de/github_exporter/pkg/github"
+	"okp4/github-exporter/pkg/github"
 )
 
 const (

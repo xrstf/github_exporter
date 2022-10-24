@@ -6,8 +6,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"go.xrstf.de/github_exporter/pkg/client"
-	"go.xrstf.de/github_exporter/pkg/github"
+	"okp4/github-exporter/pkg/client"
+	"okp4/github-exporter/pkg/github"
 )
 
 type Fetcher struct {
