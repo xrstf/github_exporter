@@ -1,6 +1,6 @@
 # GitHub Exporter for Prometheus
 
-> This project was forked from [xrstf's work](https://github.com/xrstf/github_exporter) ❤️
+> This project was forked from [xrstf's work](https://github.com/xrstf/github_exporter) ❤️. This project was originally MIT licensed.
 
 [![version](https://img.shields.io/github/v/release/okp4/github-exporter?style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/releases)
 [![lint](https://img.shields.io/github/workflow/status/okp4/github-exporter/Lint?label=lint&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/lint.yml)
@@ -66,7 +66,7 @@ as the `GITHUB_TOKEN` environment variable.
 
 By default, the exporter listens on `0.0.0.0:9612`.
 
-All configuration happens via commandline arguments. At the bare minimum, you need to
+All configuration happens via command line arguments. At the bare minimum, you need to
 specify a single repository to scrape:
 
 ```sh
