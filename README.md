@@ -207,6 +207,9 @@ the available information.
 
 A few example rules can be found in `contrib/prometheus/rules.yaml`.
 
-## License
+## You want to get involved? 😍
 
-MIT
+Please check out OKP4 health files :
+
+- [Contributing](https://github.com/okp4/.github/blob/main/CONTRIBUTING.md)
+- [Code of conduct](https://github.com/okp4/.github/blob/main/CODE_OF_CONDUCT.md)
