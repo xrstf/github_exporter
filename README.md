@@ -1,4 +1,6 @@
-# xrstf's GitHub Exporter for Prometheus
+# GitHub Exporter for Prometheus
+
+> This project was forked from [xrstf's work](https://github.com/xrstf/github_exporter) ❤️
 
 [![version](https://img.shields.io/github/v/release/okp4/github-exporter?style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/releases)
 [![lint](https://img.shields.io/github/workflow/status/okp4/github-exporter/Lint?label=lint&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/lint.yml)
@@ -7,13 +9,10 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=for-the-badge)](https://github.com/okp4/.github/blob/main/CODE_OF_CONDUCT.md)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg?style=for-the-badge)](https://opensource.org/licenses/BSD-3-Clause)
 
-This exporter is based on [xrstf's work](https://github.com/xrstf/github_exporter).
-We forked this repo to match our needs
-
 It exposes Prometheus metrics for a list of pre-configured GitHub repositories.
 The focus is on providing more insights about issues, pull requests and milestones.
 
-![Grafana Screenshot](https://github.com/xrstf/github_exporter/blob/master/contrib/grafana/screenshot.png?raw=true)
+![Grafana Screenshot](https://github.com/okp4/github-exporter/blob/main/contrib/grafana/screenshot.png?raw=true)
 
 It uses GitHub's API v4 and tries its best to not exceed the request quotas, but for large
 repositories (5k+ PRs) it's recommended to tweak the settings a bit.
@@ -55,10 +54,10 @@ so even if the API is down for an hour, the queue will not fill up with the re-f
 You need Go 1.14 installed on your machine.
 
 ```sh
-go get go.xrstf.de/github_exporter
+make install
 ```
 
-A Docker image is available as [`xrstf/github_exporter`](https://hub.docker.com/r/xrstf/github_exporter).
+A Docker image is available as [`okp4/github-exporter`](https://hub.docker.com/r/okp4/github-exporter).
 
 ## Usage
 
