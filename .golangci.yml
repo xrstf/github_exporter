@@ -18,23 +18,19 @@ linters:
     - bodyclose
     - contextcheck
     - cyclop
-    # - dupl
     - durationcheck
     - errname
     - errorlint
     - exhaustive
     - exportloopref
-    # - funlen
     - forbidigo
     - gocognit
     - goconst
     - gocritic
     - gocyclo
-    # - godot
     - goimports
     - gomodguard
     - goprintffuncname
-    # - gosec
     - lll
     - makezero
     - nakedret
@@ -61,12 +57,6 @@ linters-settings:
   cyclop:
     max-complexity: 20
     skip-tests: true
-  # funlen:
-  #   statements: 65
-  # godot:
-  #   scope: declarations # comments to be checked: `declarations` (default), `toplevel`, or `all`
-  #   exclude:
-  #     - "this line is used by starport scaffolding .*"
   lll:
     line-length: 225
 output:
@@ -79,9 +69,6 @@ issues:
     - source: "^//\\s*go:generate\\s"
       linters:
         - lll
-    # - source: "(noinspection|TODO)"
-    #   linters:
-    #     - godot
     - source: "//noinspection"
       linters:
         - gocritic
@@ -92,8 +79,6 @@ issues:
       linters:
         - bodyclose
         - deadcode
-        # - dupl
-        # - funlen
         - goconst
         - noctx
         - unused
