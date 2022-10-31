@@ -15,8 +15,6 @@ type rateLimit struct {
 	Remaining int
 }
 
-var stopFetching = errors.New("stop fetching data pls")
-
 type Client struct {
 	ctx             context.Context
 	client          *githubv4.Client

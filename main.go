@@ -8,10 +8,10 @@ import (
 	"os"
 	"time"
 
-	"go.xrstf.de/github_exporter/pkg/client"
-	"go.xrstf.de/github_exporter/pkg/fetcher"
-	"go.xrstf.de/github_exporter/pkg/github"
-	"go.xrstf.de/github_exporter/pkg/metrics"
+	"okp4/github-exporter/pkg/client"
+	"okp4/github-exporter/pkg/fetcher"
+	"okp4/github-exporter/pkg/github"
+	"okp4/github-exporter/pkg/metrics"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"

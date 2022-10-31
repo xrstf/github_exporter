@@ -1,9 +1,18 @@
-# xrstf's GitHub Exporter for Prometheus
+# GitHub Exporter for Prometheus
 
-This exporter exposes Prometheus metrics for a list of pre-configured GitHub repositories.
+> This project was forked from [xrstf's work](https://github.com/xrstf/github_exporter) ❤️. This project was originally MIT licensed.
+
+[![version](https://img.shields.io/github/v/release/okp4/github-exporter?style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/releases)
+[![lint](https://img.shields.io/github/workflow/status/okp4/github-exporter/Lint?label=lint&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/lint.yml)
+[![build](https://img.shields.io/github/workflow/status/okp4/github-exporter/Build?label=build&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/build.yml)
+[![conventional commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=for-the-badge&logo=conventionalcommits)](https://conventionalcommits.org)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=for-the-badge)](https://github.com/okp4/.github/blob/main/CODE_OF_CONDUCT.md)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg?style=for-the-badge)](https://opensource.org/licenses/BSD-3-Clause)
+
+It exposes Prometheus metrics for a list of pre-configured GitHub repositories.
 The focus is on providing more insights about issues, pull requests and milestones.
 
-![Grafana Screenshot](https://github.com/xrstf/github_exporter/blob/master/contrib/grafana/screenshot.png?raw=true)
+![Grafana Screenshot](https://github.com/okp4/github-exporter/blob/main/contrib/grafana/screenshot.png?raw=true)
 
 It uses GitHub's API v4 and tries its best to not exceed the request quotas, but for large
 repositories (5k+ PRs) it's recommended to tweak the settings a bit.
@@ -18,10 +27,10 @@ data.
 To achieve this, the exporter upon startup scans all repositories for all items. After
 this is complete, it will
 
-* fetch the most recently updated 100 items (to detect new elements and elements
+- fetch the most recently updated 100 items (to detect new elements and elements
   whose status has changed),
-* re-fetch all open items frequently (every 5 minutes by default) and
-* re-fetch **all** items every 12 hours by default.
+- re-fetch all open items frequently (every 5 minutes by default) and
+- re-fetch **all** items every 12 hours by default.
 
 While the scheduling for the re-fetches happens concurrently in multiple go routines,
 the fetching itself is done sequentially to avoid triggering GitHub's anti-abuse system.
@@ -42,13 +51,13 @@ so even if the API is down for an hour, the queue will not fill up with the re-f
 
 ## Installation
 
-You need Go 1.14 installed on your machine.
+You need Go 1.19 installed on your machine.
 
-```
-go get go.xrstf.de/github_exporter
+```sh
+make install
 ```
 
-A Docker image is available as [`xrstf/github_exporter`](https://hub.docker.com/r/xrstf/github_exporter).
+A Docker image is available as [`okp4/github-exporter`](https://hub.docker.com/r/okp4/github-exporter).
 
 ## Usage
 
@@ -57,10 +66,10 @@ as the `GITHUB_TOKEN` environment variable.
 
 By default, the exporter listens on `0.0.0.0:9612`.
 
-All configuration happens via commandline arguments. At the bare minimum, you need to
+All configuration happens via command line arguments. At the bare minimum, you need to
 specify a single repository to scrape:
 
-```
+```sh
 ./github_exporter -repo myself/my-repository
 ```
 
@@ -68,7 +77,7 @@ You can configure multiple `-repo` (which is also recommended over running the e
 multiple times in parallel, so a single exporter can serialize all API requests) and
 tweak the exporter further using the available flags:
 
-```
+```sh
 Usage of ./github_exporter:
   -debug
         enable more verbose logging
@@ -107,84 +116,85 @@ Usage of ./github_exporter:
 
 For each repository, the following metrics are available:
 
-* `github_exporter_repo_disk_usage_bytes`
-* `github_exporter_repo_forks`
-* `github_exporter_repo_stargazers`
-* `github_exporter_repo_watchers`
-* `github_exporter_repo_is_private`
-* `github_exporter_repo_is_archived`
-* `github_exporter_repo_is_disabled`
-* `github_exporter_repo_is_fork`
-* `github_exporter_repo_is_locked`
-* `github_exporter_repo_is_mirror`
-* `github_exporter_repo_is_template`
-* `github_exporter_repo_language_size_bytes` is additionally labelled with `language`.
+- `github_exporter_repo_disk_usage_bytes`
+- `github_exporter_repo_forks`
+- `github_exporter_repo_stargazers`
+- `github_exporter_repo_watchers`
+- `github_exporter_repo_is_private`
+- `github_exporter_repo_is_archived`
+- `github_exporter_repo_is_disabled`
+- `github_exporter_repo_is_fork`
+- `github_exporter_repo_is_locked`
+- `github_exporter_repo_is_mirror`
+- `github_exporter_repo_is_template`
+- `github_exporter_repo_language_size_bytes` is additionally labelled with `language`.
+- `github_exporter_repo_commits_count`
 
 For pull requests, these metrics are available:
 
-* `github_exporter_pr_info` contains lots of metadata labels and always has a constant
+- `github_exporter_pr_info` contains lots of metadata labels and always has a constant
   value of `1`. Labels are:
 
-  * `number` is the PR's number.
-  * `state` is one of `open`, `closed` or `merged`.
-  * `author` is the author ID (or username if `-realnames` is configured).
+  - `number` is the PR's number.
+  - `state` is one of `open`, `closed` or `merged`.
+  - `author` is the author ID (or username if `-realnames` is configured).
 
   In addition, the exporter recognizes a few common label conventions, namely:
 
-  * `size/*` is reflected as a `size` label (e.g. the `size/xs` label on GitHub becomes
+  - `size/*` is reflected as a `size` label (e.g. the `size/xs` label on GitHub becomes
     a `size="xs"` label on the Prometheus metric).
-  * `team/*` is reflected as a `team` label.
-  * `kind/*` is reflected as a `kind` label.
-  * `priority/*` is reflected as a `priority` label.
-  * `approved` is reflected as a boolean `approved` label.
-  * `lgtm` is reflected as a boolean `lgtm` label.
-  * `do-no-merge/*` is reflected as a boolean `pending` label.
+  - `team/*` is reflected as a `team` label.
+  - `kind/*` is reflected as a `kind` label.
+  - `priority/*` is reflected as a `priority` label.
+  - `approved` is reflected as a boolean `approved` label.
+  - `lgtm` is reflected as a boolean `lgtm` label.
+  - `do-no-merge/*` is reflected as a boolean `pending` label.
 
-* `github_exporter_pr_label_count` is the number of PRs that have a given label
+- `github_exporter_pr_label_count` is the number of PRs that have a given label
   and state. This counts all labels individually, not just those recognized for
   the `_info` metric.
 
-* `github_exporter_pr_created_at` is the UNIX timestamp of when the PR was
+- `github_exporter_pr_created_at` is the UNIX timestamp of when the PR was
   created on GitHub. This metric only has `repo` and `number` labels.
 
-* `github_exporter_pr_updated_at` is the UNIX timestamp of when the PR was
+- `github_exporter_pr_updated_at` is the UNIX timestamp of when the PR was
   last updated on GitHub. This metric only has `repo` and `number` labels.
 
-* `github_exporter_pr_fetched_at` is the UNIX timestamp of when the PR was
+- `github_exporter_pr_fetched_at` is the UNIX timestamp of when the PR was
   last fetched from the GitHub API. This metric only has `repo` and `number` labels.
 
 The PR metrics are mirrored for issues:
 
-* `github_exporter_issue_info`
-* `github_exporter_issue_label_count`
-* `github_exporter_issue_created_at`
-* `github_exporter_issue_updated_at`
-* `github_exporter_issue_fetched_at`
+- `github_exporter_issue_info`
+- `github_exporter_issue_label_count`
+- `github_exporter_issue_created_at`
+- `github_exporter_issue_updated_at`
+- `github_exporter_issue_fetched_at`
 
 The metrics for milestones are similar:
 
-* `github_exporter_milestone_info` has `repo`, `number`, `title` and `state` labels.
-* `github_exporter_milestone_issues` counts the number of open/closed issues/PRs
+- `github_exporter_milestone_info` has `repo`, `number`, `title` and `state` labels.
+- `github_exporter_milestone_issues` counts the number of open/closed issues/PRs
   for a given milestone, so it has `repo`, `number`, `kind` (issue or pullrequest)
   and `state` labels.
-* `github_exporter_milestone_created_at`
-* `github_exporter_milestone_updated_at`
-* `github_exporter_milestone_fetched_at`
-* `github_exporter_milestone_closed_at` is optional and 0 if the milestone is open.
-* `github_exporter_milestone_due_on` is optional and 0 if no due date is set.
+- `github_exporter_milestone_created_at`
+- `github_exporter_milestone_updated_at`
+- `github_exporter_milestone_fetched_at`
+- `github_exporter_milestone_closed_at` is optional and 0 if the milestone is open.
+- `github_exporter_milestone_due_on` is optional and 0 if no due date is set.
 
 And a few more metrics for monitoring the exporter itself are available as well:
 
-* `github_exporter_pr_queue_size` is the number of PRs currently queued for
+- `github_exporter_pr_queue_size` is the number of PRs currently queued for
   being fetched from the API. This is split via the `queue` label into `priority`
   (open PRs) and `regular` (older PRs).
-* `github_exporter_issue_queue_size` is the same as for the PR queue.
-* `github_exporter_milestone_queue_size` is the same as for the PR queue.
-* `github_exporter_api_requests_total` counts the number of API requests per
+- `github_exporter_issue_queue_size` is the same as for the PR queue.
+- `github_exporter_milestone_queue_size` is the same as for the PR queue.
+- `github_exporter_api_requests_total` counts the number of API requests per
   repository.
-* `github_exporter_api_costs_total` is the sum of costs (in API points) that have
+- `github_exporter_api_costs_total` is the sum of costs (in API points) that have
   been used, grouped by `repo`.
-* `github_exporter_api_points_remaining` is a gauge representing the remaining
+- `github_exporter_api_points_remaining` is a gauge representing the remaining
   API points. 5k points can be consumed per hour, with resets after 1 hour.
 
 ## Long-term storage
@@ -196,6 +206,9 @@ the available information.
 
 A few example rules can be found in `contrib/prometheus/rules.yaml`.
 
-## License
+## You want to get involved? 😍
 
-MIT
+Please check out OKP4 health files :
+
+- [Contributing](https://github.com/okp4/.github/blob/main/CONTRIBUTING.md)
+- [Code of conduct](https://github.com/okp4/.github/blob/main/CODE_OF_CONDUCT.md)

@@ -7,7 +7,7 @@ import (
 	"github.com/shurcooL/githubv4"
 	"github.com/sirupsen/logrus"
 
-	"go.xrstf.de/github_exporter/pkg/github"
+	"okp4/github-exporter/pkg/github"
 )
 
 type graphqlPullRequest struct {

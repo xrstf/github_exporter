@@ -6,8 +6,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"go.xrstf.de/github_exporter/pkg/client"
-	"go.xrstf.de/github_exporter/pkg/github"
+	"okp4/github-exporter/pkg/client"
+	"okp4/github-exporter/pkg/github"
 )
 
 type Fetcher struct {
@@ -196,9 +196,8 @@ func (f *Fetcher) queueSize(r *github.Repository, queues map[string]prioritizedI
 
 	if priority {
 		return queue.prioritySize()
-	} else {
-		return queue.regularSize()
 	}
+	return queue.regularSize()
 }
 
 func (f *Fetcher) Worker() {
@@ -350,7 +349,7 @@ func (f *Fetcher) processJob(repo *github.Repository, job string, data interface
 	case updateLabelsJobKey:
 		err = f.processUpdateLabelsJob(repo, log, job)
 	case updateRepoInfoJobKey:
-		err = f.processUpdateRepoInfos(repo, log, job)
+		err = f.processUpdateRepoInfos(repo, job)
 	case updatePullRequestsJobKey:
 		err = f.processUpdatePullRequestsJob(repo, log, job, data)
 	case findUpdatedPullRequestsJobKey:

@@ -1,7 +1,7 @@
 package metrics
 
 import (
-	"go.xrstf.de/github_exporter/pkg/prow"
+	"okp4/github-exporter/pkg/prow"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
