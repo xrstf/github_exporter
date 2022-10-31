@@ -229,7 +229,7 @@ func (mc *Collector) collectRepoMilestones(ch chan<- prometheus.Metric, repo *gi
 	return nil
 }
 
-// constMetric just helps reducing code noise
+// constMetric just helps reducing code noise.
 func constMetric(desc *prometheus.Desc, valueType prometheus.ValueType, value float64, labelValues ...string) prometheus.Metric {
 	return prometheus.MustNewConstMetric(desc, valueType, value, labelValues...)
 }

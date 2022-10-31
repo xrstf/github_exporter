@@ -8,7 +8,7 @@ import (
 
 var (
 	//////////////////////////////////////////////
-	// repository
+	// repository.
 
 	repositoryDiskUsage = prometheus.NewDesc(
 		"github_exporter_repo_disk_usage_bytes",
@@ -102,7 +102,7 @@ var (
 	)
 
 	//////////////////////////////////////////////
-	// pull requests
+	// pull requests.
 
 	pullRequestInfo *prometheus.Desc
 
@@ -142,7 +142,7 @@ var (
 	)
 
 	//////////////////////////////////////////////
-	// issues
+	// issues.
 
 	issueInfo *prometheus.Desc
 
@@ -182,7 +182,7 @@ var (
 	)
 
 	//////////////////////////////////////////////
-	// milestones
+	// milestones.
 
 	milestoneInfo = prometheus.NewDesc(
 		"github_exporter_milestone_info",
@@ -241,7 +241,7 @@ var (
 	)
 
 	//////////////////////////////////////////////
-	// exporter-related
+	// exporter-related.
 
 	githubPointsRemaining = prometheus.NewDesc(
 		"github_exporter_api_points_remaining",
