@@ -18,6 +18,7 @@ linters:
     - bodyclose
     - contextcheck
     - cyclop
+    - dupl
     - durationcheck
     - errname
     - errorlint
@@ -60,6 +61,8 @@ linters-settings:
   cyclop:
     max-complexity: 20
     skip-tests: true
+  dupl:
+    threshold: 550
   funlen:
     lines: 78
     statements: 65
@@ -85,6 +88,7 @@ issues:
       linters:
         - bodyclose
         - deadcode
+        - dupl
         - funlen
         - goconst
         - noctx
