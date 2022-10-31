@@ -45,19 +45,7 @@ type AppContext struct {
 }
 
 func main() {
-	opt := options{
-		repoRefreshInterval:      5 * time.Minute,
-		prRefreshInterval:        5 * time.Minute,
-		prResyncInterval:         12 * time.Hour,
-		prDepth:                  -1,
-		issueRefreshInterval:     5 * time.Minute,
-		issueResyncInterval:      12 * time.Hour,
-		issueDepth:               -1,
-		milestoneRefreshInterval: 5 * time.Minute,
-		milestoneResyncInterval:  12 * time.Hour,
-		milestoneDepth:           -1,
-		listenAddr:               ":9612",
-	}
+	opt := getDefaultOptions()
 
 	flag.Var(&opt.repositories, "repo", "repository (owner/name format) to include, can be given multiple times")
 	flag.StringVar(&opt.owner, "owner", opt.owner, "github login (username or organization) of the owner of the repositories that will be included. Excludes forked and locked repo, includes 100 first private & public repos")
@@ -76,13 +64,7 @@ func main() {
 	flag.BoolVar(&opt.debugLog, "debug", opt.debugLog, "enable more verbose logging")
 	flag.Parse()
 
-	// setup logging
-	var log = logrus.New()
-	log.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp:   true,
-		TimestampFormat: time.RFC1123,
-	})
-
+	log := setupLogging()
 	if opt.debugLog {
 		log.SetLevel(logrus.DebugLevel)
 	}
@@ -307,4 +289,30 @@ func resyncMilestonesWorker(ctx AppContext, log logrus.FieldLogger, repo *github
 		ctx.fetcher.EnqueueRegularMilestones(repo, numbers)
 		ctx.fetcher.EnqueueLabelUpdate(repo)
 	}
+}
+
+func getDefaultOptions() options {
+	return options{
+		repoRefreshInterval:      5 * time.Minute,
+		prRefreshInterval:        5 * time.Minute,
+		prResyncInterval:         12 * time.Hour,
+		prDepth:                  -1,
+		issueRefreshInterval:     5 * time.Minute,
+		issueResyncInterval:      12 * time.Hour,
+		issueDepth:               -1,
+		milestoneRefreshInterval: 5 * time.Minute,
+		milestoneResyncInterval:  12 * time.Hour,
+		milestoneDepth:           -1,
+		listenAddr:               ":9612",
+	}
+}
+
+func setupLogging() *logrus.Logger {
+	// setup logging
+	var log = logrus.New()
+	log.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: time.RFC1123,
+	})
+	return log
 }

@@ -23,6 +23,7 @@ linters:
     - errorlint
     - exhaustive
     - exportloopref
+    - funlen
     - forbidigo
     - gocognit
     - goconst
@@ -58,6 +59,9 @@ linters-settings:
   cyclop:
     max-complexity: 20
     skip-tests: true
+  funlen:
+    lines: 78
+    statements: 65
   lll:
     line-length: 225
 output:
@@ -80,6 +84,7 @@ issues:
       linters:
         - bodyclose
         - deadcode
+        - funlen
         - goconst
         - noctx
         - unused
