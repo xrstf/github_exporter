@@ -130,7 +130,11 @@ func main() {
 	log.Printf("Starting server on %s…", opt.listenAddr)
 
 	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(opt.listenAddr, nil))
+	server := &http.Server{
+		Addr:              opt.listenAddr,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+	log.Fatal(server.ListenAndServe())
 }
 
 func setup(ctx AppContext, log logrus.FieldLogger) {

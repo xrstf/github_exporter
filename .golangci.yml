@@ -31,6 +31,7 @@ linters:
     - goimports
     - gomodguard
     - goprintffuncname
+    - gosec
     - lll
     - makezero
     - nakedret

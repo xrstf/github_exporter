@@ -56,7 +56,7 @@ func main() {
 
 		filename := filepath.Join("pkg/client", strings.TrimSuffix(filepath.Base(templateFile), ".tmpl"))
 
-		err = os.WriteFile(filename, source, 0644)
+		err = os.WriteFile(filename, source, 0600)
 		if err != nil {
 			log.Fatalf("Failed to write %s: %v", filename, err)
 		}
