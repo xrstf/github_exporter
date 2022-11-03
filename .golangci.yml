@@ -3,34 +3,35 @@ run:
 linters:
   disable-all: true
   enable:
-    - deadcode
     - errcheck
     - gosimple
     - govet
     - ineffassign
     - staticcheck
-    - structcheck
     - typecheck
     - unused
-    - varcheck
     - asciicheck
     - bidichk
     - bodyclose
     - contextcheck
     - cyclop
+    - dupl
     - durationcheck
     - errname
     - errorlint
     - exhaustive
     - exportloopref
+    - funlen
     - forbidigo
     - gocognit
     - goconst
     - gocritic
     - gocyclo
+    - godot
     - goimports
     - gomodguard
     - goprintffuncname
+    - gosec
     - lll
     - makezero
     - nakedret
@@ -43,20 +44,22 @@ linters:
     - predeclared
     - promlinter
     - revive
-    - rowserrcheck
-    - sqlclosecheck
     - stylecheck
     - tenv
     - tparallel
     - unconvert
     - unparam
-    - wastedassign
     - whitespace
 
 linters-settings:
   cyclop:
     max-complexity: 20
     skip-tests: true
+  dupl:
+    threshold: 550
+  funlen:
+    lines: 78
+    statements: 65
   lll:
     line-length: 225
 output:
@@ -78,10 +81,10 @@ issues:
     - path: "_test\\.go"
       linters:
         - bodyclose
-        - deadcode
+        - dupl
+        - funlen
         - goconst
         - noctx
         - unused
-        - varcheck
         - wrapcheck
         - lll

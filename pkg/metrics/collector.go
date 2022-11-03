@@ -142,7 +142,8 @@ func (mc *Collector) collectRepoPullRequests(ch chan<- prometheus.Metric, repo *
 			pr.Author,
 			strings.ToLower(string(pr.State)),
 		}
-		infoLabels = append(infoLabels, prow.PullRequestLabels(&pr)...)
+		pr := repo.PullRequests[number]
+		infoLabels = append(infoLabels, prow.PullRequestLabels((&pr))...)
 
 		ch <- constMetric(pullRequestInfo, prometheus.GaugeValue, 1, infoLabels...)
 		ch <- constMetric(pullRequestCreatedAt, prometheus.GaugeValue, float64(pr.CreatedAt.Unix()), repoName, num)
@@ -175,6 +176,7 @@ func (mc *Collector) collectRepoIssues(ch chan<- prometheus.Metric, repo *github
 			issue.Author,
 			strings.ToLower(string(issue.State)),
 		}
+		issue := repo.Issues[number]
 		infoLabels = append(infoLabels, prow.IssueLabels(&issue)...)
 
 		ch <- constMetric(issueInfo, prometheus.GaugeValue, 1, infoLabels...)
@@ -227,7 +229,7 @@ func (mc *Collector) collectRepoMilestones(ch chan<- prometheus.Metric, repo *gi
 	return nil
 }
 
-// constMetric just helps reducing code noise
+// constMetric just helps reducing code noise.
 func constMetric(desc *prometheus.Desc, valueType prometheus.ValueType, value float64, labelValues ...string) prometheus.Metric {
 	return prometheus.MustNewConstMetric(desc, valueType, value, labelValues...)
 }

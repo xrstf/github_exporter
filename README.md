@@ -70,7 +70,7 @@ All configuration happens via command line arguments. At the bare minimum, you n
 specify a single repository to scrape:
 
 ```sh
-./github_exporter -repo myself/my-repository
+./github-exporter -repo myself/my-repository
 ```
 
 You can configure multiple `-repo` (which is also recommended over running the exporter
@@ -78,7 +78,7 @@ multiple times in parallel, so a single exporter can serialize all API requests)
 tweak the exporter further using the available flags:
 
 ```sh
-Usage of ./github_exporter:
+Usage of ./github-exporter:
   -debug
         enable more verbose logging
   -issue-depth int
