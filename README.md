@@ -3,8 +3,8 @@
 > This project was forked from [xrstf's work](https://github.com/xrstf/github_exporter) ❤️. This project was originally MIT licensed.
 
 [![version](https://img.shields.io/github/v/release/okp4/github-exporter?style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/releases)
-[![lint](https://img.shields.io/github/workflow/status/okp4/github-exporter/Lint?label=lint&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/lint.yml)
-[![build](https://img.shields.io/github/workflow/status/okp4/github-exporter/Build?label=build&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/build.yml)
+[![lint](https://img.shields.io/github/actions/workflow/status/okp4/github-exporter/lint.yml?label=lint&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/lint.yml)
+[![build](https://img.shields.io/github/actions/workflow/status/okp4/github-exporter/build.yml?label=build&style=for-the-badge&logo=github)](https://github.com/okp4/github-exporter/actions/workflows/build.yml)
 [![conventional commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=for-the-badge&logo=conventionalcommits)](https://conventionalcommits.org)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=for-the-badge)](https://github.com/okp4/.github/blob/main/CODE_OF_CONDUCT.md)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg?style=for-the-badge)](https://opensource.org/licenses/BSD-3-Clause)
