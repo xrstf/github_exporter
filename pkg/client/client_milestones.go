@@ -7,9 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"go.xrstf.de/github_exporter/pkg/github"
+
 	"github.com/shurcooL/githubv4"
 	"github.com/sirupsen/logrus"
-	"go.xrstf.de/github_exporter/pkg/github"
 )
 
 type graphqlMilestone struct {

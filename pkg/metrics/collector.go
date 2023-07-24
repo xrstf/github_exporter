@@ -7,14 +7,13 @@ import (
 	"strconv"
 	"strings"
 
+	"go.xrstf.de/github_exporter/pkg/client"
+	"go.xrstf.de/github_exporter/pkg/fetcher"
+	"go.xrstf.de/github_exporter/pkg/github"
 	"go.xrstf.de/github_exporter/pkg/prow"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/shurcooL/githubv4"
-
-	"go.xrstf.de/github_exporter/pkg/client"
-	"go.xrstf.de/github_exporter/pkg/fetcher"
-	"go.xrstf.de/github_exporter/pkg/github"
 )
 
 var (

@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
-
 	"go.xrstf.de/github_exporter/pkg/client"
 	"go.xrstf.de/github_exporter/pkg/github"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Fetcher struct {

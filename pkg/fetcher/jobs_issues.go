@@ -6,9 +6,9 @@ package fetcher
 import (
 	"time"
 
-	"github.com/sirupsen/logrus"
-
 	"go.xrstf.de/github_exporter/pkg/github"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
