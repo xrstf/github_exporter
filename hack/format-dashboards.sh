@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# SPDX-FileCopyrightText: 2023 Christoph Mewes
+# SPDX-License-Identifier: MIT
+
 set -euo pipefail
 
 cd $(dirname $0)/../

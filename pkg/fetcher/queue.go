@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023 Christoph Mewes
+// SPDX-License-Identifier: MIT
+
 package fetcher
 
 type integerQueue map[int]struct{}
