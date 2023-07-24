@@ -6,8 +6,8 @@ package main
 import (
 	"bytes"
 	"go/format"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -40,7 +40,7 @@ func main() {
 	for _, templateFile := range templates {
 		log.Printf("Rendering %s...", templateFile)
 
-		content, err := ioutil.ReadFile(templateFile)
+		content, err := os.ReadFile(templateFile)
 		if err != nil {
 			log.Fatalf("Failed to read client_gen.go.tmpl -- did you run this from the root directory?: %v", err)
 		}
@@ -57,7 +57,7 @@ func main() {
 
 		filename := filepath.Join("pkg/client", strings.TrimSuffix(filepath.Base(templateFile), ".tmpl"))
 
-		err = ioutil.WriteFile(filename, source, 0644)
+		err = os.WriteFile(filename, source, 0644)
 		if err != nil {
 			log.Fatalf("Failed to write %s: %v", filename, err)
 		}
