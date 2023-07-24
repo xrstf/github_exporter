@@ -22,7 +22,7 @@ if git tag | grep "v$version" >/dev/null; then
 fi
 
 set_version() {
-  yq write -i contrib/kubernetes/deployment.yaml 'spec.template.spec.containers[0].image' "xrstf/github_exporter:$1"
+  yq --inplace ".spec.template.spec.containers[0].image=\"xrstf/github_exporter:$1\"" contrib/kubernetes/deployment.yaml
 }
 
 set_version "$version"

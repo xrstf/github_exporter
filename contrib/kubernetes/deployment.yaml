@@ -24,36 +24,36 @@ spec:
         prometheus.io/port: '9612'
     spec:
       containers:
-      - name: github-exporter
-        image: 'xrstf/github_exporter:0.3.3'
-        args:
-        - -listen=0.0.0.0:9162
-        - -repo=xrstf/github_exporter
-        env:
-        - name: GITHUB_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: github-token
-              key: token
-        ports:
-        - name: metrics
-          containerPort: 9162
-          protocol: TCP
-        livenessProbe:
-          httpGet:
-            path: /metrics
-            port: metrics
-        readinessProbe:
-          httpGet:
-            path: /metrics
-            port: metrics
-        resources:
-          requests:
-            cpu: 50m
-            memory: 64Mi
-          limits:
-            cpu: 1
-            memory: 128Mi
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
+        - name: github-exporter
+          image: 'xrstf/github_exporter:0.3.3'
+          args:
+            - -listen=0.0.0.0:9162
+            - -repo=xrstf/github_exporter
+          env:
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-token
+                  key: token
+          ports:
+            - name: metrics
+              containerPort: 9162
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 1
+              memory: 128Mi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
