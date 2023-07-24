@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: github-exporter
-          image: 'xrstf/github_exporter:0.4.0'
+          image: 'xrstf/github_exporter:latest'
           args:
             - -listen=0.0.0.0:9162
             - -repo=xrstf/github_exporter
